@@ -1,0 +1,6 @@
+# npm & yarn
+node_modules/
+yarn-error.log
+
+# project
+build/
