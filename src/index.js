@@ -1,12 +1,18 @@
+import {canvasFactory} from '../lib/factory/canvas';
 import * as d3 from 'd3';
+window.d3 = d3;
 
 const dataset = [1,2,3,4,5];
 
-const body = d3.select('body');
+const chart = canvasFactory({
+    height: window.innerHeight,
+    width: window.innerWidth
+});
 
-const items = body.append('ui')
-    .selectAll('li')
+chart.svg.selectAll('circle')
     .data(dataset)
     .enter()
-    .append('li')
-    .text(d => d);
+    .append('circle')
+    .attr('r', 5)
+    .attr('cx', d => d * 10)
+    .attr('cy', d => d * 10);
