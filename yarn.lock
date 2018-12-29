@@ -1961,7 +1961,11 @@ expand-brackets@^2.1.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
-express@^4.16.2:
+express-es6-template-engine@^2.1.7:
+  version "2.1.7"
+  resolved "https://registry.yarnpkg.com/express-es6-template-engine/-/express-es6-template-engine-2.1.7.tgz#f8532ca51bc0a1fca9f56508916d65819842160a"
+
+express@^4.16.2, express@^4.16.4:
   version "4.16.4"
   resolved "https://registry.yarnpkg.com/express/-/express-4.16.4.tgz#fddef61926109e24c515ea97fd2f1bdbf62df12e"
   dependencies:
