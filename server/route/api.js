@@ -23,7 +23,7 @@ router.get('/currency', function (req, res) {
             id: item.ID,
             code: item.CharCode,
             name: item.Name,
-            value: parseFloat(item.Value.replace(',', '.'))
+            rate: parseFloat(item.Value.replace(',', '.'))
         })))
         .then(data => res.json(data))
 })
@@ -48,7 +48,7 @@ router.get('/currency/:currencyId', function (req, res) {
         .then((data=[]) => data.map(item => ({
             date: item.Date,
             nominal: item.Nominal,
-            value: parseFloat(item.Value.replace(',', '.'))
+            rate: parseFloat(item.Value.replace(',', '.'))
         })))
         .then(data => res.json(data))
 })

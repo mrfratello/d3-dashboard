@@ -1,36 +1,36 @@
 import * as d3 from 'd3';
 import {canvasFactory} from '../../lib/factory/canvas';
-import exchangeRateUsaDollar from '../../data/exchangeRateUsaDollar.json';
 
 const dateFormat = d3.timeFormat("%d.%m.%Y");
 const dateParseFormat = d3.timeParse("%d.%m.%Y");
 const lineColor = d3.color('teal');
 const markerColor = lineColor.darker(1);
 
-const excangeRateWidget = function(options, context) {
+const excangeRateWidget = async function(options, context) {
     const chart = canvasFactory(options, context);
     const svg = chart.svg;
-    // fetch('http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=02/03/2001&date_req2=14/03/2001&VAL_NM_RQ=R01235')
-    //     .then(response => {
-    //         console.log(response);
-    //     })
-    const dataset = convertDataset(exchangeRateUsaDollar);
+    const dataset = (await (await fetch('/api/currency/R01235')).json())
+            .map(item => ({
+                ...item,
+                date: dateParseFormat(item.date)
+            }))
     const scaleRate = d3.scaleLinear()
         .domain([0, d3.max(dataset, d => d.rate)])
         .range([chart.bottomY, chart.topY]);
-    console.log(scaleRate.domain());
     const scaleDate = d3.scaleTime()
-        .domain([new Date(2018, 10, 27), new Date(2018, 11, 27)])
+        .domain([d3.timeDay.offset(new Date(), -7), new Date()])
         .range([chart.leftX, chart.rightX]);
-    const line = d3.line()
-            .x(d => scaleDate(d.date))
-            .y(d => scaleRate(d.rate));
 
     const axisRate = d3.axisLeft()
         .scale(scaleRate);
     const axisDate = d3.axisBottom()
         .scale(scaleDate)
+        .ticks(d3.timeDay.every(1))
         .tickFormat(dateFormat);
+
+    const line = d3.line()
+        .x(d => scaleDate(d.date))
+        .y(d => scaleRate(d.rate));
 
     svg.append('g')
         .attr('transform', `translate(${chart.leftX}, 0)`)
@@ -56,10 +56,5 @@ const excangeRateWidget = function(options, context) {
             .attr('cx', d => scaleDate(d.date))
             .attr('fill', markerColor);
 };
-
-const convertDataset = data => data.ValCurs.Record.map(d => ({
-    date: dateParseFormat(d._Date),
-    rate: parseFloat(d.Value.replace(',', '.'))
-}));
 
 export default excangeRateWidget;
