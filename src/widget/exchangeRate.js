@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import {canvasFactory} from '../../lib/factory/canvas';
+import axios from 'axios';
 
 const dateFormat = d3.timeFormat("%d.%m.%Y");
 const dateParseFormat = d3.timeParse("%d.%m.%Y");
@@ -9,23 +10,34 @@ const markerColor = lineColor.darker(1);
 const excangeRateWidget = async function(options, context) {
     const chart = canvasFactory(options, context);
     const svg = chart.svg;
-    const dataset = (await (await fetch('/api/currency/R01235')).json())
-            .map(item => ({
-                ...item,
-                date: dateParseFormat(item.date)
-            }))
+
+    const currencyId = 'R01235';
+    const dateFrom = dateParseFormat('14.05.2018');
+    const dateTo = dateParseFormat('01.10.2018');
+    const params = {
+        dateFrom: dateFormat(dateFrom),
+        dateTo: dateFormat(dateTo)
+    };
+
+    const dataset = (await axios.get(`/api/currency/${currencyId}`, {params})
+        .then(({data}) => data))
+        .map(item => ({
+            ...item,
+            date: dateParseFormat(item.date)
+        }))
+
     const scaleRate = d3.scaleLinear()
         .domain([0, d3.max(dataset, d => d.rate)])
         .range([chart.bottomY, chart.topY]);
     const scaleDate = d3.scaleTime()
-        .domain([d3.timeDay.offset(new Date(), -7), new Date()])
+        .domain([dateFrom, dateTo])
         .range([chart.leftX, chart.rightX]);
-
+    const dateTicksCount = Math.min(d3.timeDay.count(...scaleDate.domain()), 10);
     const axisRate = d3.axisLeft()
         .scale(scaleRate);
     const axisDate = d3.axisBottom()
         .scale(scaleDate)
-        .ticks(d3.timeDay.every(1))
+        .ticks(dateTicksCount)
         .tickFormat(dateFormat);
 
     const line = d3.line()
