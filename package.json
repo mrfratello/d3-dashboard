@@ -7,7 +7,7 @@
   "scripts": {
     "start": "webpack-dev-server --open --config config/webpack.config.js",
     "build": "webpack --config config/webpack.config.js",
-    "server": "node ./server/app.js"
+    "server": "nodemon ./server/app.js"
   },
   "dependencies": {
     "d3": "^5.7.0",
@@ -24,6 +24,7 @@
     "babel-loader": "^8.0.4",
     "css-loader": "^2.1.0",
     "node-sass": "^4.11.0",
+    "nodemon": "^1.18.9",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
     "webpack": "^4.28.2",
