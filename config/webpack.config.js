@@ -1,4 +1,5 @@
 const path = require('path');
+const autoprefixer = require('autoprefixer');
 
 module.exports = [{
     // mode: 'production',
@@ -28,7 +29,17 @@ module.exports = [{
             use: [
                 'style-loader',
                 'css-loader',
-                'sass-loader'
+                {
+                    loader: 'postcss-loader',
+                    options: {
+                       plugins: () => [autoprefixer()]
+                    }
+                }, {
+                    loader: 'sass-loader',
+                    options: {
+                      includePaths: ['./node_modules']
+                    }
+                }
             ]
         }],
     },

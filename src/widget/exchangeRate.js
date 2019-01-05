@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import {widgetFactory} from '../../lib/factory/widget';
 import axios from 'axios';
+import select from '../../lib/field/select';
 
 const dateFormat = d3.timeFormat("%d.%m.%Y");
 const dateParseFormat = d3.timeParse("%d.%m.%Y");
@@ -18,15 +19,13 @@ const excangeRateWidget = async function(options, context) {
 
     const currencyList = await getCurrencyList();
 
-    const currencyControl = controls.append('select');
-    currencyControl.selectAll('option')
+    const currencyControl = select()
         .data(currencyList)
-        .enter()
-        .append('option')
-        .attr('value', d => d.id)
-        .property('disabled', d => !d.id)
-        .property('selected', d => !d.id)
-        .text(({code='', name=''}) => `${code} ${name}`);
+        .value(false)
+        .option(({code='', name=''}) => `${code} ${name}`)
+        .label('Валюта')
+        .on('change', d => console.log(d));
+    controls.call(currencyControl);
     const dateFromControl = controls.append('input')
         .attr('type', 'date')
         .attr('placeholder', 'дата начала');
@@ -37,7 +36,8 @@ const excangeRateWidget = async function(options, context) {
     const canvas = widget.appendChart();
     const svg = canvas.svg;
 
-    const currencyId = currencyControl.property('value');
+    // const currencyId = currencyControl.property('value');
+    const currencyId = 'R01235';
     const dateFrom = dateParseFormat('14.05.2018');
     const dateTo = dateParseFormat('01.10.2018');
     const params = {
