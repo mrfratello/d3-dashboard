@@ -19,6 +19,7 @@ async function getCurrencyRate(id, params) {
         .then(({data}) => data))
         .map(item => ({
             ...item,
+            rate: item.rate / item.nominal,
             date: dateParseFormat(item.date)
         }))
 }
@@ -26,7 +27,6 @@ async function getCurrencyRate(id, params) {
 const excangeRateWidget = async function(options, context) {
     const widget = widgetFactory(options, context);
     const {controls} = widget;
-    const canvas = widget.appendChart();
 
     const currencyList = await getCurrencyList();
 
@@ -46,6 +46,7 @@ const excangeRateWidget = async function(options, context) {
     controls.call(currencyControl)
         .call(dateFromControl)
         .call(dateToControl)
+    const canvas = widget.appendChart();
 
     const dateFrom = dateParseFormat('14.05.2018');
     const dateTo = dateParseFormat('01.10.2018');
