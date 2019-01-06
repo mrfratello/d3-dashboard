@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import {widgetFactory} from '../../lib/factory/widget';
 import axios from 'axios';
+import textfield from '../../lib/field/textfield'
 import select from '../../lib/field/select';
 
 const dateFormat = d3.timeFormat("%d.%m.%Y");
@@ -35,11 +36,16 @@ const excangeRateWidget = async function(options, context) {
         .option(({code='', name=''}) => `${code} ${name}`)
         .label('Валюта')
         .on('change', d => updateCanvas(canvas, d.id, params));
-    const dateFromControl = controls.append('input')
-        .attr('type', 'date')
-    const dateToControl = controls.append('input')
-        .attr('type', 'date')
+    const dateFromControl = textfield()
+        .label('От')
+        .type('date')
+    const dateToControl = textfield()
+        .label('До')
+        .type('date')
+
     controls.call(currencyControl)
+        .call(dateFromControl)
+        .call(dateToControl)
 
     const dateFrom = dateParseFormat('14.05.2018');
     const dateTo = dateParseFormat('01.10.2018');
