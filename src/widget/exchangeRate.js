@@ -6,6 +6,7 @@ import select from '../../lib/field/select';
 
 const dateFormat = d3.timeFormat("%d.%m.%Y");
 const dateParseFormat = d3.timeParse("%d.%m.%Y");
+const dateParseDateField = d3.timeParse("%Y-%m-%d");
 const lineColor = d3.color('teal');
 const markerColor = lineColor.darker(1);
 
@@ -14,8 +15,11 @@ async function getCurrencyList() {
         .then(({data}) => data)
 }
 
-async function getCurrencyRate(id, params) {
-    return (await axios.get(`/api/currency/${id}`, {params})
+async function getCurrencyRate(id, dateFrom, dateTo) {
+    return (await axios.get(`/api/currency/${id}`, {params: { 
+            dateFrom: dateFormat(dateFrom),
+            dateTo: dateFormat(dateTo)
+        }})
         .then(({data}) => data))
         .map(item => ({
             ...item,
@@ -35,25 +39,33 @@ const excangeRateWidget = async function(options, context) {
         .value(false)
         .option(({code='', name=''}) => `${code} ${name}`)
         .label('Валюта')
-        .on('change', d => updateCanvas(canvas, d.id, params));
+        .on('change', d => {
+            currencyId = d.id
+            updateCanvas(canvas, currencyId, dateFrom, dateTo)
+        });
     const dateFromControl = textfield()
         .label('От')
         .type('date')
+        .on('change', d => {
+            dateFrom = dateParseDateField(d)
+            updateCanvas(canvas, currencyId, dateFrom, dateTo)
+        })
     const dateToControl = textfield()
         .label('До')
         .type('date')
+        .on('change', d => {
+            dateTo = dateParseDateField(d)
+            updateCanvas(canvas, currencyId, dateFrom, dateTo)
+        })
 
     controls.call(currencyControl)
         .call(dateFromControl)
         .call(dateToControl)
     const canvas = widget.appendChart();
 
-    const dateFrom = dateParseFormat('14.05.2018');
-    const dateTo = dateParseFormat('01.10.2018');
-    const params = {
-        dateFrom: dateFormat(dateFrom),
-        dateTo: dateFormat(dateTo)
-    };
+    let currencyId = '';
+    let dateFrom = dateParseFormat('14.05.2018');
+    let dateTo = dateParseFormat('01.10.2018');
 
     canvas.initScales = function() {
         this.scaleRate = d3.scaleLinear()
@@ -117,7 +129,7 @@ const excangeRateWidget = async function(options, context) {
             .ease(this.ease)
             .attr('d', d => this.lineFn(d))
         const markers = this.markers.selectAll('.marker')
-            .data(dataset)
+            .data(dataset, d => d.date)
         markers.exit()
             .transition()
             .duration(this.duration)
@@ -150,8 +162,8 @@ const excangeRateWidget = async function(options, context) {
 
 };
 
-async function updateCanvas(canvas, currency, params) {
-    const dataset = await getCurrencyRate(currency, params)
+async function updateCanvas(canvas, currency, dateFrom, dateTo) {
+    const dataset = await getCurrencyRate(currency, dateFrom, dateTo)
     canvas.updateScales(dataset)
     canvas.updateAxis()
     canvas.updateLine(dataset)
