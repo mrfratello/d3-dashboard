@@ -1,4 +1,8 @@
-const datePrepare = date => date
+import * as d3 from 'd3'
+
+
+const dateFieldFormat = d3.timeFormat("%Y-%m-%d")
+const datePrepare = date => date instanceof Date ? dateFieldFormat(date) : date
 
 export const changeCurrency = id => ({
     type: 'CHANGE_CURRENCY',

@@ -96,9 +96,15 @@ const excangeRateWidget = async function(options, context) {
     }
 
     canvas.updateScales = function(dataset, {dateFrom, dateTo}) {
-        this.scaleRate.domain([0, d3.max(dataset, d => d.rate)])
-        this.scaleDate.domain([toDate(dateFrom), toDate(dateTo)])
-        window.scale = this.scaleDate
+        let [minRate, maxRate] = d3.extent(dataset, d => d.rate)
+        minRate *= .9
+        maxRate *= 1.1
+        const dateDomain = [
+            d3.timeDay.offset(toDate(dateFrom), -1),
+            d3.timeDay.offset(toDate(dateTo), 1)
+        ]
+        this.scaleRate.domain([minRate, maxRate])
+        this.scaleDate.domain(dateDomain)
     }
 
     canvas.updateAxis = function() {
