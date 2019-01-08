@@ -1,8 +1,10 @@
-import * as d3 from 'd3';
-import {widgetFactory} from '../../lib/factory/widget';
-import axios from 'axios';
+import * as d3 from 'd3'
+import {widgetFactory} from '../../lib/factory/widget'
+import axios from 'axios'
 import textfield from '../../lib/field/textfield'
-import select from '../../lib/field/select';
+import select from '../../lib/field/select'
+import store from '../store'
+import {changeCurrency, changeDateFrom, changeDateTo} from '../store/action'
 
 const dateFormat = d3.timeFormat("%d.%m.%Y");
 const dateParseFormat = d3.timeParse("%d.%m.%Y");
@@ -15,10 +17,10 @@ async function getCurrencyList() {
         .then(({data}) => data)
 }
 
-async function getCurrencyRate(id, dateFrom, dateTo) {
+async function getCurrencyRate({id, dateFrom, dateTo}) {
     return (await axios.get(`/api/currency/${id}`, {params: { 
-            dateFrom: dateFormat(dateFrom),
-            dateTo: dateFormat(dateTo)
+            dateFrom: dateFormat(new Date(dateFrom)),
+            dateTo: dateFormat(new Date(dateTo))
         }})
         .then(({data}) => data))
         .map(item => ({
@@ -39,34 +41,23 @@ const excangeRateWidget = async function(options, context) {
         .value(false)
         .option(({code='', name=''}) => `${code} ${name}`)
         .label('Валюта')
-        .on('change', d => {
-            currencyId = d.id
-            updateCanvas(canvas, currencyId, dateFrom, dateTo)
-        });
+        .on('change', ({id}) => store.dispatch(changeCurrency(id)))
     const dateFromControl = textfield()
         .label('От')
         .type('date')
-        .on('change', d => {
-            dateFrom = dateParseDateField(d)
-            updateCanvas(canvas, currencyId, dateFrom, dateTo)
-        })
+        .on('change', dateFrom => store.dispatch(changeDateFrom(dateFrom)))
     const dateToControl = textfield()
         .label('До')
         .type('date')
-        .on('change', d => {
-            dateTo = dateParseDateField(d)
-            updateCanvas(canvas, currencyId, dateFrom, dateTo)
-        })
+        .on('change', dateTo => store.dispatch(changeDateTo(dateTo)))
 
     controls.call(currencyControl)
         .call(dateFromControl)
         .call(dateToControl)
+    
     const canvas = widget.appendChart();
-
-    let currencyId = '';
-    let dateFrom = dateParseFormat('14.05.2018');
-    let dateTo = dateParseFormat('01.10.2018');
-
+    const unsubscribe = store.subscribe(() => updateCanvas(canvas, store.getState()))
+    
     canvas.initScales = function() {
         this.scaleRate = d3.scaleLinear()
             .range([this.bottomY, this.topY]);
@@ -99,9 +90,9 @@ const excangeRateWidget = async function(options, context) {
         this.ease = d3.easeQuadInOut;
     }
 
-    canvas.updateScales = function(dataset) {
+    canvas.updateScales = function(dataset, {dateFrom, dateTo}) {
         this.scaleRate.domain([0, d3.max(dataset, d => d.rate)])
-        this.scaleDate.domain([dateFrom, dateTo]) // TODO
+        this.scaleDate.domain([new Date(dateFrom), new Date(dateTo)])
     }
 
     canvas.updateAxis = function() {
@@ -162,9 +153,9 @@ const excangeRateWidget = async function(options, context) {
 
 };
 
-async function updateCanvas(canvas, currency, dateFrom, dateTo) {
-    const dataset = await getCurrencyRate(currency, dateFrom, dateTo)
-    canvas.updateScales(dataset)
+async function updateCanvas(canvas, state) {
+    const dataset = await getCurrencyRate(state)
+    canvas.updateScales(dataset, state)
     canvas.updateAxis()
     canvas.updateLine(dataset)
 }
