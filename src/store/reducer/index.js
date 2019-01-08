@@ -12,6 +12,7 @@ export const exchangeRateReducer = (state, action) => {
             ...state,
             dateTo: action.dateTo
         }
+        default: return state
     }
 }
 

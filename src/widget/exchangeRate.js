@@ -6,9 +6,10 @@ import select from '../../lib/field/select'
 import store from '../store'
 import {changeCurrency, changeDateFrom, changeDateTo} from '../store/action'
 
-const dateFormat = d3.timeFormat("%d.%m.%Y");
-const dateParseFormat = d3.timeParse("%d.%m.%Y");
-const dateParseDateField = d3.timeParse("%Y-%m-%d");
+const dateFormat = d3.timeFormat("%d.%m.%Y")
+const dateParseFormat = d3.timeParse("%d.%m.%Y")
+const dateFieldParse = d3.timeParse("%Y-%m-%d")
+const toDate = date => date instanceof Date ? date : dateFieldParse(date)
 const lineColor = d3.color('teal');
 const markerColor = lineColor.darker(1);
 
@@ -34,21 +35,25 @@ const excangeRateWidget = async function(options, context) {
     const widget = widgetFactory(options, context);
     const {controls} = widget;
 
-    const currencyList = await getCurrencyList();
+    const currencyList = await getCurrencyList()
+    const initialState = store.getState()
 
     const currencyControl = select()
         .data(currencyList)
-        .value(false)
+        .value(d => d.id)
         .option(({code='', name=''}) => `${code} ${name}`)
         .label('Валюта')
+        .selected(initialState.id)
         .on('change', ({id}) => store.dispatch(changeCurrency(id)))
     const dateFromControl = textfield()
         .label('От')
         .type('date')
+        .value(initialState.dateFrom)
         .on('change', dateFrom => store.dispatch(changeDateFrom(dateFrom)))
     const dateToControl = textfield()
         .label('До')
         .type('date')
+        .value(initialState.dateTo)
         .on('change', dateTo => store.dispatch(changeDateTo(dateTo)))
 
     controls.call(currencyControl)
@@ -92,7 +97,8 @@ const excangeRateWidget = async function(options, context) {
 
     canvas.updateScales = function(dataset, {dateFrom, dateTo}) {
         this.scaleRate.domain([0, d3.max(dataset, d => d.rate)])
-        this.scaleDate.domain([new Date(dateFrom), new Date(dateTo)])
+        this.scaleDate.domain([toDate(dateFrom), toDate(dateTo)])
+        window.scale = this.scaleDate
     }
 
     canvas.updateAxis = function() {
@@ -125,6 +131,8 @@ const excangeRateWidget = async function(options, context) {
             .transition()
             .duration(this.duration)
             .ease(this.ease)
+            .attr('cy', d => this.scaleRate(d.rate))
+            .attr('cx', d => this.scaleDate(d.date))
             .attr('r', 0)
             .remove()
         markers.enter()
@@ -150,10 +158,13 @@ const excangeRateWidget = async function(options, context) {
     canvas.initLine()
     canvas.initAnimation()
 
-
+    updateCanvas(canvas, initialState)
 };
 
 async function updateCanvas(canvas, state) {
+    if (!state.id && !state.dateFrom && !state.dateTo) {
+        return
+    }
     const dataset = await getCurrencyRate(state)
     canvas.updateScales(dataset, state)
     canvas.updateAxis()
