@@ -56,9 +56,9 @@ const excangeRateWidget = async function(options, context) {
         .value(initialState.dateTo)
         .on('change', dateTo => store.dispatch(changeDateTo(dateTo)))
 
-    controls.call(currencyControl)
-        .call(dateFromControl)
-        .call(dateToControl)
+    controls.addControl(dateFromControl)
+        .addControl(dateToControl)
+        .addControl(currencyControl, 6)
     
     const canvas = widget.appendChart();
     const unsubscribe = store.subscribe(() => updateCanvas(canvas, store.getState()))
