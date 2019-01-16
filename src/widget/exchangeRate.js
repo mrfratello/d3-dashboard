@@ -3,6 +3,7 @@ import {widgetFactory} from '../../lib/factory/widget'
 import axios from 'axios'
 import textfield from '../../lib/field/textfield'
 import select from '../../lib/field/select'
+import repeater from '../../lib/field/repeater'
 import store from '../store'
 import {changeCurrency, changeDateFrom, changeDateTo} from '../store/action'
 
@@ -155,13 +156,16 @@ const excangeRateWidget = async function(options, context) {
     const currencyList = await getCurrencyList()
     const initialState = store.getState()
 
-    const currencyControl = select()
+    const currencyPicker = select()
         .data(currencyList)
         .value(d => d.id)
         .option(({code='', name=''}) => `${code} ${name}`)
         .label('Валюта')
         .selected(initialState.id)
         .on('change', ({id}) => store.dispatch(changeCurrency(id)))
+    const currencyControl = repeater()
+        .store([null])
+        .itemType(currencyPicker)
     const dateFromControl = textfield()
         .label('От')
         .type('date')
@@ -172,10 +176,9 @@ const excangeRateWidget = async function(options, context) {
         .type('date')
         .value(initialState.dateTo)
         .on('change', dateTo => store.dispatch(changeDateTo(dateTo)))
-
     controls.addControl(dateFromControl)
         .addControl(dateToControl)
-        .addControl(currencyControl, 6)
+        .addControl(currencyControl, 8)
     
     const canvas = widget.appendChart(exchangeRateCanvas)
     const unsubscribe = store.subscribe(() => canvas.update(store.getState()))
