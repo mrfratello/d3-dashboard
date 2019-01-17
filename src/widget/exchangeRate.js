@@ -6,6 +6,7 @@ import select from '../../lib/field/select'
 import repeater from '../../lib/field/repeater'
 import store from '../store'
 import {changeCurrency, changeDateFrom, changeDateTo} from '../store/action'
+import { throws } from 'assert';
 
 const dateFormat = d3.timeFormat("%d.%m.%Y")
 const dateParseFormat = d3.timeParse("%d.%m.%Y")
@@ -15,28 +16,37 @@ const lineColor = d3.color('teal');
 const markerColor = lineColor.darker(1);
 
 async function getCurrencyList() {
-    return await axios.get(`/api/currency`)
+    return axios.get(`/api/currency`)
         .then(({data}) => data)
 }
 
 async function getCurrencyRate({id, dateFrom, dateTo}) {
-    return (await axios.get(`/api/currency/${id}`, {params: { 
+    return axios.get(`/api/currency/${id}`, {params: { 
             dateFrom: dateFormat(new Date(dateFrom)),
             dateTo: dateFormat(new Date(dateTo))
         }})
-        .then(({data}) => data))
-        .map(item => ({
-            ...item,
-            rate: item.rate / item.nominal,
-            date: dateParseFormat(item.date)
+        .then(({data}) => ({
+            id,
+            set: data.map(item => ({
+                ...item,
+                rate: item.rate / item.nominal,
+                date: dateParseFormat(item.date)
+            }))
         }))
 }
 
+async function getCurrencyRateList({ids, dateFrom, dateTo}) {
+    return Promise.all(ids.map(id => getCurrencyRate({id, dateFrom, dateTo})))
+}
+
 const exchangeRateCanvas = {
+
+    height: 400,
+
     constructor() {
         this.initScales()
             .initAxis()
-            .initLine()
+            .initLines()
             .initAnimation()
     },
 
@@ -44,10 +54,11 @@ const exchangeRateCanvas = {
         if (!state.id && !state.dateFrom && !state.dateTo) {
             return
         }
-        this.dataset = await getCurrencyRate(state)
+        state.ids = [state.id, 'R01235']
+        this.dataset = await getCurrencyRateList(state)
         this.updateScales(state)
             .updateAxis()
-            .updateLine()
+            .updateLines()
     },
 
     initScales() {
@@ -69,20 +80,22 @@ const exchangeRateCanvas = {
         return this
     },
 
-    initLine() {
+    initLines() {
         this.lineFn = d3.line()
-        this.line = this.svg.append('path')
-            .attr('fill', 'none')
-            .attr('stroke', lineColor)
-            .attr('stroke-width', 1)
-        this.markers = this.svg.append('g')
-            .classed('markers', true)
+        this.linesContainer = this.svg.append('g')
+            .classed('currency-line-container', true)
+        this.markersContainer = this.svg.append('g')
+            .classed('currency-markers', true)
         return this
     },
 
 
     updateScales({dateFrom, dateTo}) {
-        let [minRate, maxRate] = d3.extent(this.dataset, d => d.rate)
+        let [minRate, maxRate] = this.dataset.map(({set}) => d3.extent(set, d => d.rate))
+                .reduce((extent, item) => [
+                    Math.min(extent[0], item[0]),                    
+                    Math.max(extent[1], item[1])
+                ])
         minRate *= .9
         maxRate *= 1.1
         const dateDomain = [
@@ -110,17 +123,57 @@ const exchangeRateCanvas = {
         return this
     },
 
-    updateLine() {
+    updateLines() {
         this.lineFn
             .x(d => this.scaleDate(d.date))
             .y(d => this.scaleRate(d.rate))
-        this.line.datum(this.dataset)
+        const lines = this.linesContainer.selectAll('.currency-line')
+            .data(this.dataset, d => d.id)
+        lines.exit().remove()
+        const newLines = this.enterLines(lines)
+        lines.merge(newLines)
+            .datum(d => d.set)
             .transition()
             .duration(this.duration)
             .ease(this.ease)
             .attr('d', d => this.lineFn(d))
-        const markers = this.markers.selectAll('.marker')
-            .data(this.dataset, d => d.date)
+        this.updateMarkerGroups()
+        return this
+    },
+
+    enterLines(lines) {
+        return lines.enter()
+            .append('path')
+            .classed('currency-line', true)
+            .attr('fill', 'none')
+            .attr('stroke', lineColor)
+            .attr('stroke-width', 1)
+    },
+
+    updateMarkerGroups() {
+        const markerGroups = this.markersContainer.selectAll('.currency-markers__group')
+            .data(this.dataset, d => d.id)
+        markerGroups.exit().remove()
+        const newMarkerGroups = markerGroups.enter()
+            .append('g')
+            .classed('currency-markers__group', true)
+        this.updateMarkers(markerGroups.merge(newMarkerGroups))
+    },
+
+    updateMarkers(groups) {
+        const markers = groups.selectAll('.currency-marker')
+            .data(d => d.set, d => d.date)
+        this.removeMarkers(markers)
+        const newMarkers = this.enterMarkers(markers)
+        markers.transition()
+            .duration(this.duration)
+            .ease(this.ease)
+            .attr('cy', d => this.scaleRate(d.rate))
+            .attr('cx', d => this.scaleDate(d.date))
+        return this
+    },
+
+    removeMarkers(markers) {
         markers.exit()
             .transition()
             .duration(this.duration)
@@ -129,9 +182,12 @@ const exchangeRateCanvas = {
             .attr('cx', d => this.scaleDate(d.date))
             .attr('r', 0)
             .remove()
-        markers.enter()
+    },
+
+    enterMarkers(markers) {
+        return markers.enter()
             .append('circle')
-            .classed('marker', true)
+            .classed('currency-marker', true)
             .attr('cy', d => this.scaleRate(d.rate))
             .attr('cx', d => this.scaleDate(d.date))
             .attr('fill', markerColor)
@@ -140,12 +196,6 @@ const exchangeRateCanvas = {
             .duration(this.duration)
             .ease(this.ease)
             .attr('r', 4)
-        markers.transition()
-            .duration(this.duration)
-            .ease(this.ease)
-            .attr('cy', d => this.scaleRate(d.rate))
-            .attr('cx', d => this.scaleDate(d.date))
-        return this
     }
 }
 
