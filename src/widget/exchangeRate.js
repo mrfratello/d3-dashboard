@@ -6,7 +6,7 @@ import select from '../../lib/field/select'
 import repeater from '../../lib/field/repeater'
 import store from '../store'
 import {changeCurrency, changeDateFrom, changeDateTo} from '../store/action'
-import { throws } from 'assert';
+
 
 const dateFormat = d3.timeFormat("%d.%m.%Y")
 const dateParseFormat = d3.timeParse("%d.%m.%Y")
@@ -20,10 +20,10 @@ async function getCurrencyList() {
         .then(({data}) => data)
 }
 
-async function getCurrencyRate({id, dateFrom, dateTo}) {
+async function getCurrencyRate({id, period}) {
     return axios.get(`/api/currency/${id}`, {params: { 
-            dateFrom: dateFormat(new Date(dateFrom)),
-            dateTo: dateFormat(new Date(dateTo))
+            dateFrom: dateFormat(new Date(period.dateFrom)),
+            dateTo: dateFormat(new Date(period.dateTo))
         }})
         .then(({data}) => ({
             id,
@@ -35,8 +35,13 @@ async function getCurrencyRate({id, dateFrom, dateTo}) {
         }))
 }
 
-async function getCurrencyRateList({ids, dateFrom, dateTo}) {
-    return Promise.all(ids.map(id => getCurrencyRate({id, dateFrom, dateTo})))
+async function getCurrencyRateList({currencies, period}) {
+    return Promise.all(currencies.map(
+        currency => getCurrencyRate({
+            id: currency.value, 
+            period
+        })
+    ))
 }
 
 const exchangeRateCanvas = {
@@ -51,12 +56,13 @@ const exchangeRateCanvas = {
     },
 
     async update(state) {
-        if (!state.id && !state.dateFrom && !state.dateTo) {
+        if (!state.currencies.length 
+            && !state.period.dateFrom 
+            && !state.period.dateTo) {
             return
         }
-        state.ids = [state.id, 'R01235']
         this.dataset = await getCurrencyRateList(state)
-        this.updateScales(state)
+        this.updateScales(state.period)
             .updateAxis()
             .updateLines()
     },
@@ -211,20 +217,20 @@ const excangeRateWidget = async function(options, context) {
         .value(d => d.id)
         .option(({code='', name=''}) => `${code} ${name}`)
         .label('Валюта')
-        .selected(initialState.id)
-        .on('change', ({id}) => store.dispatch(changeCurrency(id)))
+        // .selected(initialState.id)
+        // .on('change', ({id}) => store.dispatch(changeCurrency(id)))
     const currencyControl = repeater()
         .store([null])
         .itemType(currencyPicker)
     const dateFromControl = textfield()
         .label('От')
         .type('date')
-        .value(initialState.dateFrom)
+        .value(initialState.period.dateFrom)
         .on('change', dateFrom => store.dispatch(changeDateFrom(dateFrom)))
     const dateToControl = textfield()
         .label('До')
         .type('date')
-        .value(initialState.dateTo)
+        .value(initialState.period.dateTo)
         .on('change', dateTo => store.dispatch(changeDateTo(dateTo)))
     controls.addControl(dateFromControl)
         .addControl(dateToControl)

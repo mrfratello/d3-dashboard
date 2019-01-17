@@ -1,14 +1,19 @@
 import * as d3 from 'd3'
 import {createStore} from 'redux'
-import {exchangeRateReducer} from './reducer'
+import exchangeRateReducer from './reducer'
 
 const dateFieldFormat = d3.timeFormat("%Y-%m-%d")
 
 const NOW = d3.timeDay.floor(new Date())
 const DEFAULT_STORE = {
-    id: 'R01235',
-    dateFrom: dateFieldFormat(d3.timeDay.offset(NOW, -17)),
-    dateTo: dateFieldFormat(NOW)
+    period: {
+        dateFrom: dateFieldFormat(d3.timeDay.offset(NOW, -17)),
+        dateTo: dateFieldFormat(NOW)    
+    },
+    currencies: [{
+        id: 'test',
+        value: 'R01235'
+    }]
 }
 const STORAGE_STORE = JSON.parse(localStorage.getItem('store')) || {}
 const INIT_STORE = Object.assign({}, DEFAULT_STORE, STORAGE_STORE)
