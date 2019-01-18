@@ -5,7 +5,7 @@ import textfield from '../../lib/field/textfield'
 import select from '../../lib/field/select'
 import repeater from '../../lib/field/repeater'
 import store from '../store'
-import {changeCurrency, changeDateFrom, changeDateTo} from '../store/action'
+import {addCurrency, changeCurrency, changeDateFrom, changeDateTo} from '../store/action'
 
 
 const dateFormat = d3.timeFormat("%d.%m.%Y")
@@ -36,12 +36,13 @@ async function getCurrencyRate({id, period}) {
 }
 
 async function getCurrencyRateList({currencies, period}) {
-    return Promise.all(currencies.map(
-        currency => getCurrencyRate({
-            id: currency.value, 
-            period
-        })
-    ))
+    return Promise.all(
+        currencies.filter(i => i.value)
+            .map(currency => getCurrencyRate({
+                id: currency.value, 
+                period
+            }))
+    )
 }
 
 const exchangeRateCanvas = {
@@ -220,8 +221,10 @@ const excangeRateWidget = async function(options, context) {
         // .selected(initialState.id)
         // .on('change', ({id}) => store.dispatch(changeCurrency(id)))
     const currencyControl = repeater()
-        .store([null])
+        .store(initialState.currencies)
         .itemType(currencyPicker)
+        .onAppendItem(() => store.dispatch(addCurrency(null)))
+    const repeaterDispatch = d3.dispatch('update')
     const dateFromControl = textfield()
         .label('От')
         .type('date')
@@ -234,10 +237,11 @@ const excangeRateWidget = async function(options, context) {
         .on('change', dateTo => store.dispatch(changeDateTo(dateTo)))
     controls.addControl(dateFromControl)
         .addControl(dateToControl)
-        .addControl(currencyControl, 8)
+        .addControl(currencyControl, 8, repeaterDispatch)
     
     const canvas = widget.appendChart(exchangeRateCanvas)
-    const unsubscribe = store.subscribe(() => canvas.update(store.getState()))
+    store.subscribe(() => canvas.update(store.getState()))
+    store.subscribe(() => repeaterDispatch.call('update', null, store.getState().currencies))
     canvas.update(initialState)
 }
 
