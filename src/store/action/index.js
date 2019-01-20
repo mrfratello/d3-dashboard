@@ -13,6 +13,11 @@ export const addCurrency = currency => ({
     currency
 })
 
+export const removeCurrency = currencyId => ({
+    type: 'REMOVE_CURRENCY',
+    id: currencyId
+})
+
 export const changeCurrency = id => ({
     type: 'CHANGE_CURRENCY',
     id

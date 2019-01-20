@@ -3,9 +3,15 @@ import {widgetFactory} from '../../lib/factory/widget'
 import axios from 'axios'
 import textfield from '../../lib/field/textfield'
 import select from '../../lib/field/select'
-import repeater from '../../lib/field/repeater'
+import repeater, {repeaterItem} from '../../lib/field/repeater'
 import store from '../store'
-import {addCurrency, changeCurrency, changeDateFrom, changeDateTo} from '../store/action'
+import {
+    addCurrency, 
+    removeCurrency, 
+    changeCurrency, 
+    changeDateFrom, 
+    changeDateTo
+} from '../store/action'
 
 
 const dateFormat = d3.timeFormat("%d.%m.%Y")
@@ -220,9 +226,12 @@ const excangeRateWidget = async function(options, context) {
         .label('Валюта')
         // .selected(initialState.id)
         // .on('change', ({id}) => store.dispatch(changeCurrency(id)))
+    const item = repeaterItem()
+        .content(currencyPicker)
     const currencyControl = repeater()
         .store(initialState.currencies)
-        .itemType(currencyPicker)
+        .itemType(item)
+        .key(d => d.id)
         .onAppendItem(() => store.dispatch(addCurrency(null)))
     const repeaterDispatch = d3.dispatch('update')
     const dateFromControl = textfield()
@@ -238,6 +247,7 @@ const excangeRateWidget = async function(options, context) {
     controls.addControl(dateFromControl)
         .addControl(dateToControl)
         .addControl(currencyControl, 8, repeaterDispatch)
+        .on('remove-repeater-item', () => store.dispatch(removeCurrency(d3.event.detail.id)))
     
     const canvas = widget.appendChart(exchangeRateCanvas)
     store.subscribe(() => canvas.update(store.getState()))

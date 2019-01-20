@@ -29,7 +29,7 @@ const currencyReducer = (state = {}, action) => {
                     ...state,
                     currency: action.currency
                 }
-        default: 
+        default:
             return state
     }
 }
