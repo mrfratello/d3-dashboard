@@ -43,9 +43,9 @@ async function getCurrencyRate({id, period}) {
 
 async function getCurrencyRateList({currencies, period}) {
     return Promise.all(
-        currencies.filter(i => i.value)
+        currencies.filter(i => i.currency)
             .map(currency => getCurrencyRate({
-                id: currency.value, 
+                id: currency.currency, 
                 period
             }))
     )
@@ -224,8 +224,7 @@ const excangeRateWidget = async function(options, context) {
         .value(d => d.id)
         .option(({code='', name=''}) => `${code} ${name}`)
         .label('Валюта')
-        // .selected(initialState.id)
-        // .on('change', ({id}) => store.dispatch(changeCurrency(id)))
+        .selected(d => d.currency)
     const item = repeaterItem()
         .content(currencyPicker)
     const currencyControl = repeater()
@@ -248,6 +247,7 @@ const excangeRateWidget = async function(options, context) {
         .addControl(dateToControl)
         .addControl(currencyControl, 8, repeaterDispatch)
         .on('remove-repeater-item', () => store.dispatch(removeCurrency(d3.event.detail.id)))
+        .on('select-change', () => store.dispatch(changeCurrency(d3.event.detail.id, d3.event.detail.item.value.id)))
     
     const canvas = widget.appendChart(exchangeRateCanvas)
     store.subscribe(() => canvas.update(store.getState()))

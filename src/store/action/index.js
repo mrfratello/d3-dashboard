@@ -18,9 +18,10 @@ export const removeCurrency = currencyId => ({
     id: currencyId
 })
 
-export const changeCurrency = id => ({
+export const changeCurrency = (id, currency) => ({
     type: 'CHANGE_CURRENCY',
-    id
+    id,
+    currency
 })
 
 export const changeDateFrom = dateFrom => ({
