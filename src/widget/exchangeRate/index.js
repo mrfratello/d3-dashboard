@@ -1,17 +1,18 @@
+
 import * as d3 from 'd3'
-import {widgetFactory} from '../../lib/factory/widget'
+import {widgetFactory} from '../../../lib/factory/widget'
 import axios from 'axios'
-import textfield from '../../lib/field/textfield'
-import select from '../../lib/field/select'
-import repeater, {repeaterItem} from '../../lib/field/repeater'
-import store from '../store'
+import textfield from '../../../lib/field/textfield'
+import select from '../../../lib/field/select'
+import repeater, {repeaterItem} from '../../../lib/field/repeater'
+import store from '../../store'
 import {
     addCurrency, 
     removeCurrency, 
     changeCurrency, 
     changeDateFrom, 
     changeDateTo
-} from '../store/action'
+} from '../../store/action'
 
 
 const dateFormat = d3.timeFormat("%d.%m.%Y")
