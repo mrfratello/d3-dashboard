@@ -227,6 +227,7 @@ const excangeRateWidget = async function(options, context) {
         .selected(d => d.currency)
     const item = repeaterItem()
         .content(currencyPicker)
+        .injectEvents('select-change')
     const currencyControl = repeater()
         .store(initialState.currencies)
         .itemType(item)
@@ -255,4 +256,4 @@ const excangeRateWidget = async function(options, context) {
     canvas.update(initialState)
 }
 
-export default excangeRateWidget;
+export default excangeRateWidget
