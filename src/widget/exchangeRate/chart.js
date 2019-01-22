@@ -6,8 +6,6 @@ const dateFormat = d3.timeFormat("%d.%m.%Y")
 const dateParseFormat = d3.timeParse("%d.%m.%Y")
 const dateFieldParse = d3.timeParse("%Y-%m-%d")
 const toDate = date => date instanceof Date ? date : dateFieldParse(date)
-const lineColor = d3.color('teal');
-const markerColor = lineColor.darker(1);
 
 async function getCurrencyRate({id, period}) {
     return axios.get(`/api/currency/${id}`, {params: { 
@@ -36,6 +34,7 @@ async function getCurrencyRateList({currencies, period}) {
 
 const exchangeRateChart = {
     height: 400,
+    color: d3.scaleOrdinal().range(d3.schemeCategory10),
 
     constructor() {
         this.initScales()
@@ -86,6 +85,9 @@ const exchangeRateChart = {
 
 
     updateScales({dateFrom, dateTo}) {
+        if (!this.dataset.length) {
+            return this
+        }
         let [minRate, maxRate] = this.dataset.map(({set}) => d3.extent(set, d => d.rate))
                 .reduce((extent, item) => [
                     Math.min(extent[0], item[0]),                    
@@ -104,7 +106,7 @@ const exchangeRateChart = {
 
     updateAxis() {
         this.axisRateFn.scale(this.scaleRate)
-        const dateTicksCount = Math.min(d3.timeDay.count(...this.scaleDate.domain()), 10);
+        const dateTicksCount = Math.min(d3.timeDay.count(...this.scaleDate.domain()), 10)
         this.axisDateFn.scale(this.scaleDate)
             .ticks(dateTicksCount)
         this.axisRate.transition()
@@ -123,7 +125,7 @@ const exchangeRateChart = {
             .x(d => this.scaleDate(d.date))
             .y(d => this.scaleRate(d.rate))
         const lines = this.linesContainer.selectAll('.currency-line')
-            .data(this.dataset, d => d.id)
+            .data(this.dataset)
         lines.exit().remove()
         const newLines = this.enterLines(lines)
         lines.merge(newLines)
@@ -141,13 +143,13 @@ const exchangeRateChart = {
             .append('path')
             .classed('currency-line', true)
             .attr('fill', 'none')
-            .attr('stroke', lineColor)
+            .attr('stroke', (d, i) => this.color(i))
             .attr('stroke-width', 1)
     },
 
     updateMarkerGroups() {
         const markerGroups = this.markersContainer.selectAll('.currency-markers__group')
-            .data(this.dataset, d => d.id)
+            .data(this.dataset)
         markerGroups.exit().remove()
         const newMarkerGroups = markerGroups.enter()
             .append('g')
@@ -157,9 +159,12 @@ const exchangeRateChart = {
 
     updateMarkers(groups) {
         const markers = groups.selectAll('.currency-marker')
-            .data(d => d.set, d => d.date)
+            .data((d, i) => d.set.map(item => ({
+                ...item,
+                i
+            })), d => d.date)
         this.removeMarkers(markers)
-        const newMarkers = this.enterMarkers(markers)
+        this.enterMarkers(markers)
         markers.transition()
             .duration(this.duration)
             .ease(this.ease)
@@ -185,7 +190,7 @@ const exchangeRateChart = {
             .classed('currency-marker', true)
             .attr('cy', d => this.scaleRate(d.rate))
             .attr('cx', d => this.scaleDate(d.date))
-            .attr('fill', markerColor)
+            .attr('fill', d => d3.color(this.color(d.i)).darker(1))
             .attr('r', 0)
             .transition()
             .duration(this.duration)
