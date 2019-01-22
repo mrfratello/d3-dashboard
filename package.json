@@ -19,9 +19,11 @@
     "fast-xml-parser": "^3.12.11",
     "iconv-lite": "^0.4.24",
     "material-components-web": "^0.42.1",
+    "morgan": "^1.9.1",
     "redux": "^4.0.1",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
+    "route-cache": "^0.4.4",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

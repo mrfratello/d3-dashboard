@@ -4,11 +4,12 @@ const request = require('request-promise-native')
 const iconv = require('iconv-lite')
 const parser = require('fast-xml-parser')
 const d3 = require('d3')
-const dateCentralBankFormat = d3.timeFormat("%d/%m/%Y");
-const dateParseLocalFormat = d3.timeParse("%d.%m.%Y");
+const routeCache = require('route-cache')
+const dateCentralBankFormat = d3.timeFormat("%d/%m/%Y")
+const dateParseLocalFormat = d3.timeParse("%d.%m.%Y")
+const DAY = 24 * 60 * 60
 
-
-router.get('/currency', function (req, res) {
+router.get('/currency', routeCache.cacheSeconds(DAY), function (req, res) {
     request({
         uri: 'http://www.cbr.ru/scripts/XML_daily.asp',
         qs: {
@@ -28,7 +29,7 @@ router.get('/currency', function (req, res) {
         .then(data => res.json(data))
 })
 
-router.get('/currency/:currencyId', function (req, res) {
+router.get('/currency/:currencyId', routeCache.cacheSeconds(DAY), function (req, res) {
     const now = new Date()
     const {currencyId} = req.params
     let {dateFrom, dateTo} = req.query
