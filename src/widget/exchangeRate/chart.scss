@@ -1,0 +1,15 @@
+.currency-aim{
+    
+    &_hidden {
+        display: none;
+    }
+
+    &__line{
+        stroke: currentColor;
+        stroke-dasharray: 6, 3;
+    }
+}
+
+.currency-line {
+    stroke-width: 2;
+}
