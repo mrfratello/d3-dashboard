@@ -228,8 +228,8 @@ const exchangeRateChart = {
         this.aimLineX
             .interrupt(self.animFast)
             .transition(this.animFast)
-            .attr('x1', this.scaleDate(date))
-            .attr('x2', this.scaleDate(date))
+            .attr('x1', this.scaleDate(date) + .5)
+            .attr('x2', this.scaleDate(date) + .5)
             .attr('y1', this.scaleRate(rate))
             .attr('y2', this.scaleRate.range()[0])
     },
