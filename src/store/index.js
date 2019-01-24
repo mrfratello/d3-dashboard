@@ -12,7 +12,9 @@ const DEFAULT_STORE = {
     },
     currencies: [{
         id: 'test',
-        currency: 'R01235'
+        currency: 'R01235',
+        code: 'USD',
+        name: 'Доллар США'
     }]
 }
 const STORAGE_STORE = JSON.parse(localStorage.getItem('store')) || {}

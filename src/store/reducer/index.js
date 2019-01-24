@@ -20,13 +20,17 @@ const currencyReducer = (state = {}, action) => {
         case 'ADD_CURRENCY':
             return {
                 id: action.id,
-                currency: action.currency
+                name: action.name,
+                code: action.code,
+                currency: action.currency,
             }
         case 'CHANGE_CURRENCY':
             return state.id !== action.id 
                 ? state
                 : {
                     ...state,
+                    name: action.name,
+                    code: action.code,
                     currency: action.currency
                 }
         default:

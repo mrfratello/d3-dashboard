@@ -14,6 +14,7 @@
     "@babel/polyfill": "^7.2.5",
     "axios": "^0.18.0",
     "d3": "^5.7.0",
+    "d3-svg-legend": "^2.25.6",
     "express": "^4.16.4",
     "express-es6-template-engine": "^2.1.7",
     "fast-xml-parser": "^3.12.11",

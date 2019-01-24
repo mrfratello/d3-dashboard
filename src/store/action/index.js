@@ -7,10 +7,12 @@ const datePrepare = date => date instanceof Date ? dateFieldFormat(date) : date
 
 const i = 0
 
-export const addCurrency = currency => ({
+export const addCurrency = (currency={}) => ({
     type: 'ADD_CURRENCY',
     id: v4(),
-    currency
+    name: currency.name,
+    code: currency.code,
+    currency: currency.currency
 })
 
 export const removeCurrency = currencyId => ({
@@ -18,9 +20,11 @@ export const removeCurrency = currencyId => ({
     id: currencyId
 })
 
-export const changeCurrency = (id, currency) => ({
+export const changeCurrency = (id, {id:currency, name, code}) => ({
     type: 'CHANGE_CURRENCY',
     id,
+    name,
+    code,
     currency
 })
 

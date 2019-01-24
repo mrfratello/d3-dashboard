@@ -1,5 +1,6 @@
 import * as d3 from 'd3'
 import axios from 'axios'
+import {legendColor} from 'd3-svg-legend'
 import './chart.scss'
 
 
@@ -8,13 +9,14 @@ const dateParseFormat = d3.timeParse("%d.%m.%Y")
 const dateFieldParse = d3.timeParse("%Y-%m-%d")
 const toDate = date => date instanceof Date ? date : dateFieldParse(date)
 
-async function getCurrencyRate({id, period}) {
+async function getCurrencyRate({currency: {currency: id, name, code}, period}) {
     return axios.get(`/api/currency/${id}`, {params: { 
             dateFrom: dateFormat(new Date(period.dateFrom)),
             dateTo: dateFormat(new Date(period.dateTo))
         }})
         .then(({data}) => ({
             id,
+            label: `[${code}] ${name}`,
             set: data.map(item => ({
                 ...item,
                 rate: item.rate / item.nominal,
@@ -27,7 +29,7 @@ async function getCurrencyRateList({currencies, period}) {
     return Promise.all(
         currencies.filter(i => i.currency)
             .map(currency => getCurrencyRate({
-                id: currency.currency, 
+                currency,
                 period
             }))
     )
@@ -35,6 +37,12 @@ async function getCurrencyRateList({currencies, period}) {
 
 const exchangeRateChart = {
     height: 400,
+    margin: {
+        top: 10,
+        bottom: 10,
+        left: 10,
+        right: 300
+    },
     color: d3.scaleOrdinal().range(d3.schemeCategory10),
 
     constructor() {
@@ -42,6 +50,7 @@ const exchangeRateChart = {
             .initAxis()
             .initAim()
             .initLines()
+            .initLegend()
     },
 
     async update(state) {
@@ -54,6 +63,7 @@ const exchangeRateChart = {
         this.updateScales(state.period)
             .updateAxis()
             .updateLines()
+            .updateLegend()
     },
 
     initScales() {
@@ -94,6 +104,11 @@ const exchangeRateChart = {
             .classed('currency-aim__line_type_x', true)
         this.aimLineY.classed('currency-aim__line_type_y', true)
         return this
+    },
+
+    initLegend() {
+        this.legend = this.svg.append('g')
+            .attr('transform', `translate(${this.rightX + 20}, ${this.topY})`)
     },
 
     updateScales({dateFrom, dateTo}) {
@@ -200,14 +215,14 @@ const exchangeRateChart = {
             .attr('stroke-width', 4)
             .on('mouseover', function(d) {
                 d3.select(this)
-                    .interrupt(self.animFast)
+                    .interrupt()
                     .transition(self.animFast)
                     .attr('r', 8)
                     .attr('stroke-width', 0)
             })
             .on('mouseout', function(d) {
                 d3.select(this)
-                    .interrupt(self.animFast)
+                    .interrupt()
                     .transition(self.animFast)
                     .attr('r', 4)
                     .attr('stroke-width', 4)
@@ -232,6 +247,17 @@ const exchangeRateChart = {
             .attr('x2', this.scaleDate(date) + .5)
             .attr('y1', this.scaleRate(rate))
             .attr('y2', this.scaleRate.range()[0])
+    },
+
+    updateLegend() {
+        const legend = legendColor()
+            .scale(this.color)
+            .cellFilter((d, i) => i < this.dataset.length)
+            .labelWrap(this.margin.right)
+            .labels(({i}) => {
+                return (this.dataset[i]) ? this.dataset[i].label : false
+            })
+        this.legend.call(legend)
     },
 
     showAimLines() {

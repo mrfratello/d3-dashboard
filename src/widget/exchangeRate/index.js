@@ -40,7 +40,7 @@ const excangeRateWidget = async function(options, context) {
         .store(initialState.currencies)
         .itemType(item)
         .key(d => d.id)
-        .onAppendItem(() => store.dispatch(addCurrency(null)))
+        .onAppendItem(() => store.dispatch(addCurrency()))
     const repeaterDispatch = d3.dispatch('update')
     const dateFromControl = textfield()
         .label('От')
@@ -56,7 +56,7 @@ const excangeRateWidget = async function(options, context) {
         .addControl(dateToControl)
         .addControl(currencyControl, 8, repeaterDispatch)
         .on('remove-repeater-item', () => store.dispatch(removeCurrency(d3.event.detail.id)))
-        .on('select-change', () => store.dispatch(changeCurrency(d3.event.detail.id, d3.event.detail.item.value.id)))
+        .on('select-change', () => store.dispatch(changeCurrency(d3.event.detail.id, d3.event.detail.item.value)))
     
     const canvas = widget.appendChart(exchangeRateChart)
     store.subscribe(() => canvas.update(store.getState()))
