@@ -40,7 +40,7 @@ const excangeRateWidget = async function(options, context) {
         .store(initialState.currencies)
         .itemType(item)
         .key(d => d.id)
-        .onAppendItem(() => store.dispatch(addCurrency()))
+        .onAppendItem(() => store.dispatch(addCurrency({currency:false})))
     const repeaterDispatch = d3.dispatch('update')
     const dateFromControl = textfield()
         .label('От')
