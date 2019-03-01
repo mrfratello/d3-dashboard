@@ -3,7 +3,8 @@ import {widgetFactory} from '../../../lib/factory/widget'
 import axios from 'axios'
 import textfield from '../../../lib/field/textfield'
 import select from '../../../lib/field/select'
-import repeater, {repeaterItem} from '../../../lib/field/repeater'
+import repeater from '../../../lib/field/repeater/repeater'
+import repeaterItem from '../../../lib/field/repeater/item/item'
 import store from '../../store'
 import {
     addCurrency,
