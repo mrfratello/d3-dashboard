@@ -1,14 +1,19 @@
 import * as d3 from 'd3'
-import excangeRate from './widget/exchangeRate'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from './App'
 import './store'
 import './main.scss'
-window.d3 = d3;
+window.d3 = d3
+window.React = React
 
-d3.select('body')
-    .classed('mdc-typography', true)
+// const chart = excangeRate({
+//     height: window.innerHeight,
+//     width: window.innerWidth,
+//     title: 'Курс валют'
+// })
 
-const chart = excangeRate({
-    height: window.innerHeight,
-    width: window.innerWidth,
-    title: 'Курс валют'
-})
+ReactDOM.render(
+    <App />,
+    document.getElementById("root")
+)

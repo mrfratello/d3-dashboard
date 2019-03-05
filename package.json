@@ -21,6 +21,8 @@
     "iconv-lite": "^0.4.24",
     "material-components-web": "^0.42.1",
     "morgan": "^1.9.1",
+    "react": "^16.8.3",
+    "react-dom": "^16.8.3",
     "redux": "^4.0.1",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
@@ -30,6 +32,7 @@
   "devDependencies": {
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.2.3",
+    "@babel/preset-react": "^7.0.0",
     "autoprefixer": "^9.4.4",
     "babel-loader": "^8.0.4",
     "css-loader": "^2.1.0",
