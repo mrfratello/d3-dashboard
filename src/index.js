@@ -3,7 +3,12 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
 import './store'
+import 'primereact/resources/themes/nova-light/theme.css'
+import 'primereact/resources/primereact.min.css'
+import 'primeicons/primeicons.css'
 import './main.scss'
+
+
 window.d3 = d3
 window.React = React
 

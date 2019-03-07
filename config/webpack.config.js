@@ -28,7 +28,7 @@ module.exports = [{
                 ]
               }
         }, {
-            test: /\.scss$/,
+            test: /\.(sc|c)ss$/,
             use: [
                 'style-loader',
                 'css-loader',
@@ -44,6 +44,22 @@ module.exports = [{
                     }
                 }
             ]
+        }, {
+                test: /\.(png|jpg|gif)$/,
+                use: [{
+                    loader: 'file-loader',
+                    options: {
+                        outputPath: 'images'
+                    }
+                }]
+        }, {
+            test: /\.(woff(2)?|ttf|eot|svg)$/,
+            use: [{
+                loader: 'file-loader',
+                options: {
+                outputPath: 'fonts'
+                }
+            }]
         }],
     },
 
