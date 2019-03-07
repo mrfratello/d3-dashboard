@@ -1,4 +1,5 @@
-import {combineReducers} from 'redux'
+import { combineReducers } from 'redux'
+import { widgetsReducer } from './widgets'
 
 
 const periodReducer = (state = {}, action) => {
@@ -58,7 +59,8 @@ const currenciesReducer = (state = [], action) => {
     }
 }
 
-export default combineReducers({
+export const reducer = combineReducers({
     period: periodReducer,
-    currencies: currenciesReducer
+    currencies: currenciesReducer,
+    widgets: widgetsReducer
 })
