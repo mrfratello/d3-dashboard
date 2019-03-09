@@ -1,6 +1,7 @@
 import { connect } from "react-redux"
 import { ScrollPanel } from 'primereact/scrollpanel'
 import { Widget } from '../widget/Widget'
+import { widgetSelector } from '../../redux/selectors'
 import './Dashboard.scss'
 
 
@@ -14,5 +15,5 @@ const DashboardUI = ({widgets=[]}) =>
 
 
 export const Dashboard = connect(
-        ({widgets}) => ({ widgets})
+        state => ({ widgets: widgetSelector(state) })
     )(DashboardUI)

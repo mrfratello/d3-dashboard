@@ -956,6 +956,14 @@ babel-loader@^8.0.4:
     mkdirp "^0.5.1"
     util.promisify "^1.0.0"
 
+babel-runtime@^6.26.0:
+  version "6.26.0"
+  resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
+  integrity sha1-llxwWGaOgrVde/4E/yM3vItWR/4=
+  dependencies:
+    core-js "^2.4.0"
+    regenerator-runtime "^0.11.0"
+
 balanced-match@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
@@ -1492,6 +1500,11 @@ copy-concurrently@^1.0.0:
 copy-descriptor@^0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/copy-descriptor/-/copy-descriptor-0.1.1.tgz#676f6eb3c39997c2ee1ac3a924fd6124748f578d"
+
+core-js@^2.4.0:
+  version "2.6.5"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.5.tgz#44bc8d249e7fb2ff5d00e0341a7ffb94fbf67895"
+  integrity sha512-klh/kDpwX8hryYL14M9w/xei6vrv6sE8gTHDG7/T/+SEovB/G4ejwcfE/CBzO6Edsu+OETZMZ3wcX/EjUkrl5A==
 
 core-js@^2.5.7:
   version "2.6.1"
@@ -2837,6 +2850,13 @@ ignore-walk@^3.0.1:
   resolved "https://registry.yarnpkg.com/ignore-walk/-/ignore-walk-3.0.1.tgz#a83e62e7d272ac0e3b551aaa82831a19b69f82f8"
   dependencies:
     minimatch "^3.0.4"
+
+immutable-ops@^0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/immutable-ops/-/immutable-ops-0.5.2.tgz#3803d9bc65821bf4aaedf2f3542ec8714b73646a"
+  integrity sha1-OAPZvGWCG/Sq7fLzVC7IcUtzZGo=
+  dependencies:
+    ramda "^0.22.1"
 
 import-cwd@^2.0.0:
   version "2.1.0"
@@ -4349,6 +4369,11 @@ querystringify@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/querystringify/-/querystringify-2.1.0.tgz#7ded8dfbf7879dcc60d0a644ac6754b283ad17ef"
 
+ramda@^0.22.1:
+  version "0.22.1"
+  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.22.1.tgz#031da0c3df417c5b33c96234757eb37033f36a0e"
+  integrity sha1-Ax2gw99BfFszyWI0dX6zcDPzag4=
+
 randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.5:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/randombytes/-/randombytes-2.0.6.tgz#d302c522948588848a8d300c932b44c24231da80"
@@ -4476,6 +4501,16 @@ redent@^1.0.0:
     indent-string "^2.1.0"
     strip-indent "^1.0.1"
 
+redux-orm@^0.12.2:
+  version "0.12.2"
+  resolved "https://registry.yarnpkg.com/redux-orm/-/redux-orm-0.12.2.tgz#cc6c16f387c0f65f66aee8b8d53f1ecc933a9164"
+  integrity sha512-Hm4OPqseqB4WFw7DNCIOHhHNvcpOSwCBxBLOmchwqqq3XqCFldyAG3YMv9XJsvTTugw1z4PGlNgG1hXRiBgmBg==
+  dependencies:
+    babel-runtime "^6.26.0"
+    immutable-ops "^0.5.2"
+    lodash "^4.17.10"
+    reselect "^3.0.1"
+
 redux@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/redux/-/redux-4.0.1.tgz#436cae6cc40fbe4727689d7c8fae44808f1bfef5"
@@ -4492,6 +4527,11 @@ regenerate-unicode-properties@^7.0.0:
 regenerate@^1.2.1, regenerate@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.4.0.tgz#4a856ec4b56e4077c557589cae85e7a4c8869a11"
+
+regenerator-runtime@^0.11.0:
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.11.1.tgz#be05ad7f9bf7d22e056f9726cee5017fbf19e2e9"
+  integrity sha512-MguG95oij0fC3QV3URf4V2SDYGJhJnJGqvIIgdECeODCT98wSWDAJ94SSuVpYQUoTcGUIL6L4yNB7j1DFFHSBg==
 
 regenerator-runtime@^0.12.0:
   version "0.12.1"
@@ -4634,6 +4674,11 @@ require-main-filename@^1.0.1:
 requires-port@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
+
+reselect@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/reselect/-/reselect-3.0.1.tgz#efdaa98ea7451324d092b2b2163a6a1d7a9a2147"
+  integrity sha1-79qpjqdFEyTQkrKyFjpqHXqaIUc=
 
 resolve-cwd@^2.0.0:
   version "2.0.0"
