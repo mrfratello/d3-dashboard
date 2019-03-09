@@ -18,14 +18,9 @@ const DEFAULT_STORE = {
         currency: 'R01235',
         code: 'USD',
         name: 'Доллар США'
-    }],
-    widgets: [{
-        id: 1,
-        title: 'Привет мир!'
     }]
 }
 const STORAGE_STORE = JSON.parse(localStorage.getItem('store')) || {}
-const INIT_STORE = Object.assign({}, DEFAULT_STORE, STORAGE_STORE)
 
 const rootReducer = createReducer(orm)
 
