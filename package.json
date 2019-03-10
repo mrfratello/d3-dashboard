@@ -21,6 +21,7 @@
     "fast-xml-parser": "^3.12.11",
     "iconv-lite": "^0.4.24",
     "morgan": "^1.9.1",
+    "primeflex": "^1.0.0-rc.1",
     "primeicons": "^1.0.0",
     "primereact": "^3.1.0",
     "react": "^16.8.3",

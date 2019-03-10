@@ -3,9 +3,6 @@ import { WIDGET_UPDATE } from '../action/types'
 
 
 export class Widget extends Model {
-    toString() {
-        return `Widget(${this.id}): ${this.title}`;
-    }
     static get fields() {
         return {
             id: attr(),
