@@ -1,9 +1,9 @@
 import * as d3 from 'd3'
 import { createStore } from 'redux'
 import { createReducer } from 'redux-orm'
-import { reducer } from './reducer'
-import { orm } from './model';
-import bootstrap from './bootstrap';
+import { orm } from './model'
+import bootstrap from './bootstrap'
+
 
 const dateFieldFormat = d3.timeFormat("%Y-%m-%d")
 
@@ -20,7 +20,6 @@ const DEFAULT_STORE = {
         name: 'Доллар США'
     }]
 }
-const STORAGE_STORE = JSON.parse(localStorage.getItem('store')) || {}
 
 const rootReducer = createReducer(orm)
 

@@ -7,8 +7,10 @@ const dbStateSelector = state => state
 export const widgetSelector = createSelector(
     orm,
     dbStateSelector,
-    session => session.Widget.all().toModelArray().map(widget => {
-            const obj = widget.ref
-            return Object.assign({}, obj)
-        })
+    session => session.Widget.all()
+            .toModelArray()
+            .map(widget => {
+                let type = widget.type ? widget.type.toJson() : {}
+                return Object.assign({}, widget.ref, {type})
+            })
 )

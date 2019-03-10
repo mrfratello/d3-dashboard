@@ -28,7 +28,7 @@ const WidgetHeader = connect(null, { widgetUpdateTitle })(WidgetHeaderUI)
 export const Widget = ({params}) => 
     <div className='Widget' style={{marginBottom: 10}}>
         <Card header={<WidgetHeader title={params.title} id={params.id} />}>
-            Содержимое виджета #{params.id}
+            Содержимое виджета #{params.id} {console.log(params.type)}
         </Card>
     </div>
  

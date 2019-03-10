@@ -1,5 +1,5 @@
 import { Model, attr } from 'redux-orm'
-import { WIDGET_UPDATE_TITLE } from '../action/types'
+import { WIDGET_UPDATE } from '../action/types'
 
 
 export class Widget extends Model {
@@ -12,9 +12,9 @@ export class Widget extends Model {
             title: attr()
         }
     }
-    static reducer({type, payload}, Widget, session) {
+    static reducer({type, payload}, Widget) {
         switch (type) {
-            case WIDGET_UPDATE_TITLE:
+            case WIDGET_UPDATE:
                 const { id } = payload
                 Widget.withId(id).update(payload)
                 break
