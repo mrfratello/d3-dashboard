@@ -3,11 +3,11 @@ import { Card } from 'primereact/card'
 import { Inplace, InplaceDisplay, InplaceContent } from 'primereact/components/inplace/Inplace'
 import { InputText } from 'primereact/inputtext'
 import { ExchangeRateControl } from '../control/ExchangeRate'
-import { widgetUpdateTitle } from '../../redux/action/Widget'
+import { widgetUpdate } from '../../redux/action/Widget'
 import './Widget.scss'
 
 
-const WidgetHeaderUI = ({id, title, widgetUpdateTitle}) => 
+const WidgetHeaderUI = ({id, title, widgetUpdate}) => 
     <div className='WidgetHeader'>
         <Inplace closable={true}>
             <InplaceDisplay>
@@ -16,7 +16,7 @@ const WidgetHeaderUI = ({id, title, widgetUpdateTitle}) =>
             <InplaceContent>
                 <InputText value={title} 
                            autoFocus
-                           onChange={e => widgetUpdateTitle({
+                           onChange={e => widgetUpdate({
                                title: e.target.value,
                                id
                             })} />
@@ -24,7 +24,7 @@ const WidgetHeaderUI = ({id, title, widgetUpdateTitle}) =>
         </Inplace>
     </div>
 
-const WidgetHeader = connect(null, { widgetUpdateTitle })(WidgetHeaderUI)
+const WidgetHeader = connect(null, { widgetUpdate })(WidgetHeaderUI)
 
 export const Widget = ({params}) => 
     <div className='Widget' style={{marginBottom: 10}}>

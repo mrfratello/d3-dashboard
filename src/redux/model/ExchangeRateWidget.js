@@ -1,8 +1,6 @@
-import * as d3 from 'd3'
 import { Model, attr, oneToOne, fk } from 'redux-orm'
+import { EXCHANGE_RATE_WIDGET_UPDATE } from '../action/types'
 
-
-const dateParse = d3.timeParse("%Y-%m-%d")
 
 export class ExchangeRateCarrency extends Model {
     static get fields() {
@@ -33,20 +31,19 @@ export class ExchangeRateWidget extends Model {
                 .toModelArray()
                 .map(currency => currency.ref)
         return {
+            ...this.ref,
             type: 'ExchangeRate',
-            dateFrom: dateParse(this.ref.dateFrom),
-            dateTo: dateParse(this.ref.dateTo),
             currencies
         }
     }
-    // static reducer({type, payload}, Widget) {
-    //     switch (type) {
-    //         case WIDGET_UPDATE:
-    //             const { id } = payload
-    //             Widget.withId(id).update(payload)
-    //             break
-    //     }
-    // }
+    static reducer({type, payload}, ExchangeRateWidget) {
+        switch (type) {
+            case EXCHANGE_RATE_WIDGET_UPDATE:
+                const { id } = payload
+                ExchangeRateWidget.withId(id).update(payload)
+                break
+        }
+    }
 }
 ExchangeRateWidget.modelName = 'ExchangeRateWidget'
 

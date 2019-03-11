@@ -1,13 +1,20 @@
-import {Calendar} from 'primereact/calendar'
+import { connect } from 'react-redux'
+import { Calendar } from 'primereact/calendar'
+import { exchangeRateWidgetUpdate } from '../../redux/action/ExchangeRateWidget'
+import { dateISO } from '../../locale'
 
 
-const ExchangeRateControlUI = ({model}) => 
+const ExchangeRateControlUI = ({model, exchangeRateWidgetUpdate}) => 
     <div className='p-grid p-fluid'>
         <div className='p-col-4'>
             <span className='p-float-label'>
                 <Calendar id='dateFrom'
-                          value={model.dateFrom} 
-                          onChange={(e) => console.log(e.target.value)} 
+                          value={dateISO.parse(model.dateFrom)} 
+                          onChange={(e) => exchangeRateWidgetUpdate({
+                              dateFrom: dateISO.format(e.target.value),
+                              id: model.id
+                          })}
+                          maxDate={dateISO.parse(model.dateTo)}
                           showIcon={true}
                           dateFormat="dd.mm.yy" />
                 <label htmlFor='dateFrom'>От</label>
@@ -16,13 +23,19 @@ const ExchangeRateControlUI = ({model}) =>
         <div className='p-col-4'>
             <span className='p-float-label'>
                 <Calendar id='dateTo' 
-                          value={model.dateTo} 
-                          onChange={(e) => false} 
-                          showIcon={true}
+                          value={dateISO.parse(model.dateTo)} 
+                          onChange={(e) => exchangeRateWidgetUpdate({
+                            dateTo: dateISO.format(e.target.value),
+                            id: model.id
+                        })}
+                        minDate={dateISO.parse(model.dateFrom)}
+                        showIcon={true}
                           dateFormat="dd.mm.yy" />
                 <label htmlFor='dateTo'>До</label>
             </span>
         </div>
     </div>
 
-export const ExchangeRateControl = ExchangeRateControlUI
+
+export const ExchangeRateControl = connect(null, {exchangeRateWidgetUpdate})(ExchangeRateControlUI)
+export default ExchangeRateControl

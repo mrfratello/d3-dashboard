@@ -1,6 +1,6 @@
 import { WIDGET_UPDATE } from './types' 
 
-export const widgetUpdateTitle = props => ({
+export const widgetUpdate = props => ({
         type: WIDGET_UPDATE,
         payload: props
     })
