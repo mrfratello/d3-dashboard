@@ -14,3 +14,11 @@ export const widgetSelector = createSelector(
                 return Object.assign({}, widget.ref, {type})
             })
 )
+
+
+export const currencySelector = createSelector(
+    orm,
+    dbStateSelector,
+    ({Currency}) => Currency.all().toRefArray()
+
+)
