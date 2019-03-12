@@ -15,10 +15,8 @@ export const widgetSelector = createSelector(
             })
 )
 
-
 export const currencySelector = createSelector(
     orm,
     dbStateSelector,
     ({Currency}) => Currency.all().toRefArray()
-
 )

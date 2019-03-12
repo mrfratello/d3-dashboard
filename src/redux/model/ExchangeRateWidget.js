@@ -1,5 +1,8 @@
-import { Model, attr, oneToOne, many } from 'redux-orm'
-import { EXCHANGE_RATE_WIDGET_UPDATE } from '../action/types'
+import { Model, attr, oneToOne, fk } from 'redux-orm'
+import { 
+    EXCHANGE_RATE_WIDGET_UPDATE,
+    EXCHANGE_RATE_WIDGET_UPDATE_CURRENCY 
+} from '../action/types'
 
 
 export class ExchangeRateWidget extends Model {
@@ -9,21 +12,24 @@ export class ExchangeRateWidget extends Model {
             widget: oneToOne('Widget', 'type'),
             dateFrom: attr(),
             dateTo: attr(),
-            currencies: many('Currency', 'exchangeRateWidgets')
+            currency: fk('Currency', 'exchangeRateWidgets')
         }
     }
 
     toJson() {
         return {
             ...this.ref,
-            currencies: this.currencies.toRefArray()
+            type: 'ExchangeRateWidget',
+            currency: this.currency ? this.currency.ref : null
         }
     }
     static reducer({type, payload}, ExchangeRateWidget) {
         switch (type) {
             case EXCHANGE_RATE_WIDGET_UPDATE:
-                const { id } = payload
-                ExchangeRateWidget.withId(id).update(payload)
+                ExchangeRateWidget.withId(payload.id).update(payload)
+                break
+            case EXCHANGE_RATE_WIDGET_UPDATE_CURRENCY:
+                ExchangeRateWidget.withId(payload.id).currency = payload.currencyId
                 break
         }
     }

@@ -7,21 +7,15 @@ export default function bootstrap(orm) {
     const store = JSON.parse(localStorage.getItem('store')) || {}
     const state = Object.assign(orm.getEmptyState(), store)
     const session = orm.mutableSession(state)
-    const { Widget, ExchangeRateWidget, Currency } = session
+    const { Widget, ExchangeRateWidget } = session
 
     if (!Widget.all().count()) {
         const exchangeRateWidget = Widget.create({ title: 'Курсы валют' })
-        const exchangeRate = ExchangeRateWidget.create({
-                dateFrom: dateISO.format(d3.timeDay.offset(NOW, -17)),
-                dateTo: dateISO.format(NOW),
-                widget: exchangeRateWidget
-            })
-        const currency = Currency.create({
-            currency: 'R01235',
-            code: 'USD',
-            name: 'Доллар США'
+        ExchangeRateWidget.create({
+            dateFrom: dateISO.format(d3.timeDay.offset(NOW, -17)),
+            dateTo: dateISO.format(NOW),
+            widget: exchangeRateWidget
         })
-        exchangeRate.currencies.add(currency)
     }
     return {
         ...state

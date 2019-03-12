@@ -29,7 +29,7 @@ const WidgetHeader = connect(null, { widgetUpdate })(WidgetHeaderUI)
 export const Widget = ({params}) => 
     <div className='Widget' style={{marginBottom: 10}}>
         <Card header={<WidgetHeader title={params.title} id={params.id} />}>
-            { params.type && params.type.modelName === 'ExchangeRateWidget'
+            { params.type && params.type.type === 'ExchangeRateWidget'
                 ? <ExchangeRateControl model={params.type} />
                 : false }
         </Card>
