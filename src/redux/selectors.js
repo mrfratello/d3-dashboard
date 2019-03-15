@@ -2,7 +2,7 @@ import { createSelector } from 'redux-orm'
 import { orm } from './model'
 
 
-const dbStateSelector = state => state
+export const dbStateSelector = state => state.orm
 
 export const widgetSelector = createSelector(
     orm,
