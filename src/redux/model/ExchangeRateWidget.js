@@ -12,7 +12,7 @@ export class ExchangeRateWidget extends Model {
             widget: oneToOne('Widget', 'type'),
             dateFrom: attr(),
             dateTo: attr(),
-            currency: fk('Currency', 'exchangeRateWidgets')
+            // currency: fk('Currency', 'exchangeRateWidgets')
         }
     }
 
@@ -20,7 +20,7 @@ export class ExchangeRateWidget extends Model {
         return {
             ...this.ref,
             type: 'ExchangeRateWidget',
-            currency: this.currency ? this.currency.ref : null
+            currency: this.currency ? this.currency.toJson : null
         }
     }
     static reducer({type, payload}, ExchangeRateWidget) {

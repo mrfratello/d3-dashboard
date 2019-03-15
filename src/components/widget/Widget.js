@@ -2,7 +2,7 @@ import { connect } from "react-redux"
 import { Card } from 'primereact/card'
 import { Inplace, InplaceDisplay, InplaceContent } from 'primereact/components/inplace/Inplace'
 import { InputText } from 'primereact/inputtext'
-import { ExchangeRateControl } from '../control/ExchangeRate'
+import { ExchangeRateControl } from '../exchangeRate/control/Control'
 import { widgetUpdate } from '../../redux/action/Widget'
 import './Widget.scss'
 

@@ -1,11 +1,11 @@
 import { connect } from 'react-redux'
 import { Calendar } from 'primereact/calendar'
-import { CurrencyPicker } from '../currencyPicker/CurrencyPicker'
+import { CurrencyPicker } from '../../currencyPicker/CurrencyPicker'
 import { 
     exchangeRateWidgetUpdate, 
     exchangeRateWidgetUpdateCurrency 
-} from '../../redux/action/ExchangeRateWidget'
-import { dateISO } from '../../locale'
+} from '../../../redux/action/ExchangeRateWidget'
+import { dateISO } from '../../../locale'
 
 
 const ExchangeRateControlUI = ({model, update, updateCurrency}) => 
