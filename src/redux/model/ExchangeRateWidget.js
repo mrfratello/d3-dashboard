@@ -11,8 +11,7 @@ export class ExchangeRateWidget extends Model {
             id: attr(),
             widget: oneToOne('Widget', 'type'),
             dateFrom: attr(),
-            dateTo: attr(),
-            // currency: fk('Currency', 'exchangeRateWidgets')
+            dateTo: attr()
         }
     }
 
@@ -20,16 +19,17 @@ export class ExchangeRateWidget extends Model {
         return {
             ...this.ref,
             type: 'ExchangeRateWidget',
-            currency: this.currency ? this.currency.toJson : null
+            currencies: this.currencies 
+                ? this.currencies.toModelArray()
+                    .map(currency => currency.toJson()) 
+                : []
         }
     }
     static reducer({type, payload}, ExchangeRateWidget) {
         switch (type) {
             case EXCHANGE_RATE_WIDGET_UPDATE:
-                ExchangeRateWidget.withId(payload.id).update(payload)
-                break
-            case EXCHANGE_RATE_WIDGET_UPDATE_CURRENCY:
-                ExchangeRateWidget.withId(payload.id).currency = payload.currencyId
+                ExchangeRateWidget.withId(payload.id)
+                    .update(payload)
                 break
         }
     }

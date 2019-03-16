@@ -19,6 +19,9 @@ export default function bootstrap(orm) {
         ExchangeRateCurrency.create({
             widget: exchangeRateWidget
         })
+        ExchangeRateCurrency.create({
+            widget: exchangeRateWidget
+        })
     }
     return {
         ...state
