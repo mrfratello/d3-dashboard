@@ -1,7 +1,7 @@
 import { Model, attr, oneToOne, fk } from 'redux-orm'
-import { 
+import {
     EXCHANGE_RATE_WIDGET_UPDATE,
-    EXCHANGE_RATE_WIDGET_UPDATE_CURRENCY 
+    EXCHANGE_RATE_WIDGET_ADD_CURRENCY_ITEM
 } from '../action/types'
 
 
@@ -19,17 +19,22 @@ export class ExchangeRateWidget extends Model {
         return {
             ...this.ref,
             type: 'ExchangeRateWidget',
-            currencies: this.currencies 
+            currencies: this.currencies
                 ? this.currencies.toModelArray()
-                    .map(currency => currency.toJson()) 
+                    .map(currency => currency.toJson())
                 : []
         }
     }
-    static reducer({type, payload}, ExchangeRateWidget) {
+    static reducer({type, payload}, ExchangeRateWidget, session) {
         switch (type) {
             case EXCHANGE_RATE_WIDGET_UPDATE:
                 ExchangeRateWidget.withId(payload.id)
                     .update(payload)
+                break
+            case EXCHANGE_RATE_WIDGET_ADD_CURRENCY_ITEM:
+                session.ExchangeRateCurrency.create({
+                    widget: ExchangeRateWidget.withId(payload.id)
+                })
                 break
         }
     }

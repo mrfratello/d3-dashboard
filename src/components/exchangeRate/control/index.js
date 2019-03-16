@@ -1,13 +1,23 @@
+import { connect } from 'react-redux'
+import { addCurrencyItem, removeCurrencyItem } from '../../../redux/action/ExchangeRateWidget'
 import { Period } from './Period'
-import { Currency } from './Currency'
+import { Currencies } from './Currencies'
 
 
-export const ExchangeRateControl = ({model}) => 
+const ExchangeRateControlUI = ({model, addCurrencyItem, removeCurrencyItem}) =>
     <div>
         <Period model={model} />
-        {model.currencies.map((currency, i) => 
-            <Currency key={i} currencyItem={currency} />)
-        }
+        <div className='p-grid p-fluid'>
+            <div className='p-col-8'>
+                <Currencies currencies={model.currencies}
+                            onAdd={() => addCurrencyItem({ id: model.id })}
+                            onRemove={currency => removeCurrencyItem(currency)} />
+            </div>
+        </div>
     </div>
 
+export const ExchangeRateControl = connect(
+    null,
+    { addCurrencyItem, removeCurrencyItem }
+)(ExchangeRateControlUI)
 export default ExchangeRateControl
