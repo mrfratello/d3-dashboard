@@ -20,3 +20,5 @@ export const currencySelector = createSelector(
     dbStateSelector,
     ({Currency}) => Currency.all().toRefArray()
 )
+
+export const exchangeRateChartData = state => state.exchangeRateChart

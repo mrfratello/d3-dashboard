@@ -1,16 +1,27 @@
 import { Component } from 'react'
 import PropTypes from 'prop-types'
 import * as d3 from 'd3'
+import { connect } from 'react-redux'
 import { withFauxDOM } from 'react-faux-dom'
+import { exchangeRateChartData } from '../../../redux/selectors'
 import { dateGOSTR } from '../../../locale'
+import './Chart.scss'
 
 
-const toDate = date => date instanceof Date ? date : dateFieldParse(date)
+const toDate = date => date instanceof Date ? date : dateGOSTR.parse(date)
 
 class ExchangeRateChart extends Component {
 
     constructor(props) {
         super(props)
+        this.animSlow = d3.transition()
+            .duration(500)
+            .ease(d3.easeQuadInOut)
+        this.animFast =  d3.transition()
+            .duration(100)
+            .ease(d3.easeQuadInOut)
+        this.color = d3.scaleOrdinal().range(d3.schemeCategory10)
+
         const {width, height, margin, padding} = this.props
         this.innerWidth = width - (margin.left + margin.right + padding.left + padding.right);
         this.innerHeight = height - (margin.top + margin.bottom + padding.top + padding.bottom);
@@ -29,13 +40,16 @@ class ExchangeRateChart extends Component {
             .initLines()
             // .initLegend()
         this.props.animateFauxDOM(800)
+        if (this.props.data) {
+            this.update()
+        }
     }
 
     initScales() {
         this.scaleRate = d3.scaleLinear()
-            .range([this.bottomY, this.topY]);
+            .range([this.bottomY, this.topY])
         this.scaleDate = d3.scaleTime()
-            .range([this.leftX, this.rightX]);
+            .range([this.leftX, this.rightX])
         return this
     }
 
@@ -66,12 +80,20 @@ class ExchangeRateChart extends Component {
         //     return
         // }
         // this.dataset = await getCurrencyRateList(state)
+        if (this.props.data !== prevProps.data) {
+            this.update()
+        }
+
+    }
+
+    update() {
         const period = {
             dateFrom: '12.03.2019',
             dateTo: '16.03.2019'
         }
+        this.dataset = this.props.data.slice()
         this.dataset = [{"date":"12.03.2019","nominal":10000,"rate":78.8403},{"date":"13.03.2019","nominal":10000,"rate":78.5604},{"date":"14.03.2019","nominal":10000,"rate":78.3475},{"date":"15.03.2019","nominal":10000,"rate":78.2364},{"date":"16.03.2019","nominal":10000,"rate":78.1457}]
-        this.dataset = {
+        this.dataset = [{
             id: 'R01717',
             label: `[UZS] сумов`,
             set: this.dataset.map(item => ({
@@ -79,11 +101,12 @@ class ExchangeRateChart extends Component {
                 rate: item.rate / item.nominal,
                 date: dateGOSTR.parse(item.date)
             }))
-        }
+        }]
         this.updateScales(period)
             .updateAxis()
             .updateLines()
             // .updateLegend()
+        this.props.animateFauxDOM(1000)    
     }
 
     updateScales({dateFrom, dateTo}) {
@@ -244,7 +267,8 @@ ExchangeRateChart.defaultProps = {
         bottom: 30,
         left: 50,
         right: 30
-    }
+    },
+    data: [{"date":"12.03.2019","nominal":10000,"rate":78.8403},{"date":"13.03.2019","nominal":10000,"rate":78.5604},{"date":"14.03.2019","nominal":10000,"rate":78.3475},{"date":"15.03.2019","nominal":10000,"rate":78.2364},{"date":"16.03.2019","nominal":10000,"rate":78.1457}]
 }
 
 ExchangeRateChart.propTypes = {
@@ -254,4 +278,6 @@ ExchangeRateChart.propTypes = {
     padding: PropTypes.object
 }
 
-export default withFauxDOM(ExchangeRateChart);
+export default connect( 
+        state => ({ data: exchangeRateChartData(state) }) 
+    )(withFauxDOM(ExchangeRateChart))
