@@ -15,8 +15,7 @@ export class Currency extends Model {
     static reducer({type, payload}, Currency) {
         switch (type) {
             case CURRENCY_FILL:
-                Currency.delete()
-                payload.map(item => Currency.create(item))
+                payload.map(item => Currency.upsert(item))
                 break
         }
     }
