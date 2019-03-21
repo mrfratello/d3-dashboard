@@ -22,3 +22,12 @@ export const currencySelector = createSelector(
 )
 
 export const exchangeRateChartData = state => state.exchangeRateChart
+
+export const exchangeRateChartPeriod = createSelector(
+    orm,
+    dbStateSelector,
+    session => session.ExchangeRateWidget.all()
+            .toModelArray()
+            .map(widget => widget.widget ? widget.ref : false)
+            .filter(i => i)
+)

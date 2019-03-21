@@ -8,7 +8,7 @@ const ExchangeRateUI = ({model, fetchCurrencyRateList}) => {
     fetchCurrencyRateList(model)
     return <div>
         <ExchangeRateControl model={model} />
-        <ExchangeRateChart width={1000} height={400} />
+        <ExchangeRateChart widgetId={model.id} width={1000} height={400} />
     </div>
 }
 

@@ -4,12 +4,12 @@ import * as d3 from 'd3'
 import { connect } from 'react-redux'
 import { withFauxDOM } from 'react-faux-dom'
 import debounce from 'lodash.debounce'
-import { exchangeRateChartData } from '../../../redux/selectors'
-import { dateGOSTR } from '../../../locale'
+import { exchangeRateChartData, exchangeRateChartPeriod } from '../../../redux/selectors'
+import { dateGOSTR, dateISO } from '../../../locale'
 import './Chart.scss'
 
 
-const toDate = date => date instanceof Date ? date : dateGOSTR.parse(date)
+const toDate = date => date instanceof Date ? date : dateISO.parse(date)
 
 class ExchangeRateChart extends Component {
 
@@ -79,37 +79,36 @@ class ExchangeRateChart extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        // if (!state.currencies.length 
-        //     && !state.period.dateFrom 
-        //     && !state.period.dateTo) {
-        //     return
-        // }
-        if (this.props.data !== prevProps.data) {
+        if (this.props.data !== prevProps.data || this.periodUpdated()) {
             this.updateData()
         }
+    }
 
+    periodUpdated() {
+        const {widgetId, periods} = this.props
+        const [period] = periods.filter(item => item.id === widgetId)
+        return this.period !== period
+            ? this.period = period
+            : false
     }
 
     updateData() {
-        const period = {
-            dateFrom: '27.02.2019',
-            dateTo: '16.03.2019'
-        }
         this.dataset = this.props.data.slice()
-        this.updateScales(period)
+        this.updateScales()
             .updateAxis()
             .updateLines()
             // .updateLegend()
         this.props.animateFauxDOM(800)
     }
 
-    updateScales({dateFrom, dateTo}) {
+    updateScales() {
         if (!this.dataset.length) {
             return this
         }
+        const {dateFrom, dateTo} = this.period
         let [minRate, maxRate] = this.dataset.map(({set}) => d3.extent(set, d => d.rate))
                 .reduce((extent, item) => [
-                    Math.min(extent[0], item[0]),                    
+                    Math.min(extent[0], item[0]),
                     Math.max(extent[1], item[1])
                 ])
         minRate *= .9
@@ -242,13 +241,9 @@ class ExchangeRateChart extends Component {
     }
 
     render() {
-        const {width, height} = this.props
         return <Fragment>
             { this.props.chart }
         </Fragment>
-        return <svg width={width} height={height}>
-                { this.props.chart }
-            </svg>
     }
 }
 
@@ -268,12 +263,16 @@ ExchangeRateChart.defaultProps = {
 }
 
 ExchangeRateChart.propTypes = {
+    widgetId: PropTypes.any.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     margin: PropTypes.object,
     padding: PropTypes.object
 }
 
-export default connect( 
-        state => ({ data: exchangeRateChartData(state) }) 
+export default connect(
+        state => ({
+            data: exchangeRateChartData(state),
+            periods: exchangeRateChartPeriod(state)
+        })
     )(withFauxDOM(ExchangeRateChart))
