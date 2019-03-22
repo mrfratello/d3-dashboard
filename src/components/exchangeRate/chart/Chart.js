@@ -31,12 +31,22 @@ class ExchangeRateChart extends Component {
         this.topY = margin.top + padding.top;
         this.bottomY = this.topY + this.innerHeight;
         this.updateData = debounce(this.updateData, 500)
+        this.initConstants()
+    }
+
+    initConstants() {
+        this.CLS_AXIS = 'ExchangeCurrencyAxis'
+        this.CLS_AXIS_Y = 'ExchangeCurrencyAxis_orient_y'
+        this.CLS_AXIS_X = 'ExchangeCurrencyAxis_orient_x'
+        this.CLS_CONTAINER_LINES = 'ExchangeCurrencyContainerLines'
+        this.CLS_LINE = 'ExchangeCurrencyContainerLines-Line'
+        this.CLS_CONTAINER_MARKERS = 'ExchangeCurrencyContainerMarkers'
+        this.CLS_MARKERS = 'ExchangeCurrencyContainerMarkers-Marker'
     }
 
     componentDidMount() {
         const faux = this.props.connectFauxDOM('svg', 'chart')
         this.svg = d3.select(faux)
-                .attr('id', 'chart')
                 .attr('width', this.props.width)
                 .attr('height', this.props.height)
         this.initScales()
@@ -53,28 +63,42 @@ class ExchangeRateChart extends Component {
     initScales() {
         this.scaleRate = d3.scaleLinear()
             .range([this.bottomY, this.topY])
+            .domain([0, 1])
         this.scaleDate = d3.scaleTime()
             .range([this.leftX, this.rightX])
+            .domain([new Date(), new Date()])
         return this
     }
 
     initAxis() {
-        this.axisRateFn = d3.axisLeft()
-        this.axisDateFn = d3.axisBottom()
-            .tickFormat(dateGOSTR.format)
         this.axisRate = this.svg.append('g')
+            .classed(this.CLS_AXIS, true)
+            .classed(this.CLS_AXIS_Y, true)
             .attr('transform', `translate(${this.leftX}, 0)`)
         this.axisDate = this.svg.append('g')
+            .classed(this.CLS_AXIS, true)
+            .classed(this.CLS_AXIS_X, true)
             .attr('transform', `translate(0, ${this.bottomY})`)
+
+        const axisRateFn = d3.axisLeft()
+            .scale(this.scaleRate)
+        this.axisRate
+            .call(axisRateFn)
+
+        const axisDateFn = d3.axisBottom()
+            .scale(this.scaleDate)
+            .tickFormat(dateGOSTR.format)
+        this.axisDate
+            .call(axisDateFn)
         return this
     }
 
     initLines() {
         this.lineFn = d3.line()
         this.linesContainer = this.svg.append('g')
-            .classed('currency-line-container', true)
+            .classed(this.CLS_CONTAINER_LINES, true)
         this.markersContainer = this.svg.append('g')
-            .classed('currency-markers', true)
+            .classed(this.CLS_CONTAINER_MARKERS, true)
         return this
     }
 
@@ -93,12 +117,13 @@ class ExchangeRateChart extends Component {
     }
 
     updateData() {
+        const faux = this.props.connectFauxDOM('svg', 'chart')
+        this.svg = d3.select(faux)
         this.dataset = this.props.data.slice()
         this.updateScales()
             .updateAxis()
             .updateLines()
             // .updateLegend()
-        this.props.animateFauxDOM(800)
     }
 
     updateScales() {
@@ -123,14 +148,21 @@ class ExchangeRateChart extends Component {
     }
 
     updateAxis() {
-        this.axisRateFn.scale(this.scaleRate)
+        const axisRateFn = d3.axisLeft()
+            .scale(this.scaleRate)
+        this.axisRate
+            .transition(this.animSlow)
+            .call(axisRateFn)
+
         const dateTicksCount = Math.min(d3.timeDay.count(...this.scaleDate.domain()), 10)
-        this.axisDateFn.scale(this.scaleDate)
+        const axisDateFn = d3.axisBottom()
+            .scale(this.scaleDate)
+            .tickFormat(dateGOSTR.format)
             .ticks(dateTicksCount)
-        this.axisRate.transition(this.animSlow)
-            .call(this.axisRateFn)
-        this.axisDate.transition(this.animSlow)
-            .call(this.axisDateFn)
+        this.axisDate
+            .transition(this.animSlow)
+            .call(axisDateFn)
+        this.props.animateFauxDOM(800)
         return this
     }
 
@@ -146,6 +178,7 @@ class ExchangeRateChart extends Component {
             .datum(d => d.set)
             .transition(this.animSlow)
             .attr('d', d => this.lineFn(d))
+        this.props.animateFauxDOM(800)
         this.updateMarkerGroups()
         return this
     }
