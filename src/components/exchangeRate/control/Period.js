@@ -1,15 +1,13 @@
-import { connect } from 'react-redux'
 import { Calendar } from 'primereact/calendar'
-import { exchangeRateWidgetUpdate } from '../../../redux/action/ExchangeRateWidget'
 import { dateISO } from '../../../locale'
 
 
-const PeriodUI = ({model, update}) => 
+export const Period = ({model, update}) =>
     <div className='p-grid p-fluid'>
         <div className='p-col-4'>
             <span className='p-float-label'>
                 <Calendar id='dateFrom'
-                        value={dateISO.parse(model.dateFrom)} 
+                        value={dateISO.parse(model.dateFrom)}
                         onChange={(e) => update({
                             dateFrom: dateISO.format(e.target.value),
                             id: model.id
@@ -22,8 +20,8 @@ const PeriodUI = ({model, update}) =>
         </div>
         <div className='p-col-4'>
             <span className='p-float-label'>
-                <Calendar id='dateTo' 
-                        value={dateISO.parse(model.dateTo)} 
+                <Calendar id='dateTo'
+                        value={dateISO.parse(model.dateTo)}
                         onChange={(e) => update({
                             dateTo: dateISO.format(e.target.value),
                             id: model.id
@@ -36,9 +34,4 @@ const PeriodUI = ({model, update}) =>
         </div>
     </div>
 
-
-export const Period = connect(
-        null,
-        { update: exchangeRateWidgetUpdate }
-    )(PeriodUI)
 export default Period

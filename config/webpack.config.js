@@ -16,6 +16,14 @@ module.exports = [{
         filename: 'bundle.js'
     },
 
+    resolve: {
+        alias: {
+            Components: path.resolve(__dirname, '../src/components/'),
+            Containers: path.resolve(__dirname, '../src/containers/'),
+            Redux: path.resolve(__dirname, '../src/redux/')
+        }
+    },
+
     module: {
         rules: [{
             test: /\.js?$/,
@@ -23,7 +31,7 @@ module.exports = [{
             loader: 'babel-loader',
             options: {
                 presets: [
-                    '@babel/preset-env', 
+                    '@babel/preset-env',
                     '@babel/preset-react'
                 ]
               }

@@ -1,10 +1,9 @@
-import { Component } from 'react'
-import { Dashboard } from './components/dashboard/Dashboard'
 import { Provider } from 'react-redux'
-import store from './redux/store'
+import Dashboard from 'Containers/dashboard/Dashboard'
+import store from 'Redux/store'
 
 
-const App = () => 
+const App = () =>
     <Provider store={store}>
         <Dashboard />
     </Provider>

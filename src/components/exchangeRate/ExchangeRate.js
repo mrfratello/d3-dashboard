@@ -1,19 +1,13 @@
-import { connect } from 'react-redux'
-import { ExchangeRateControl } from './control'
-import ExchangeRateChart from './chart/Chart'
-import { fetchCurrencyRateList } from '../../redux/action/ExchangeRateWidget'
+import Control from 'Containers/exchangeRate/control/Control'
+import Chart from 'Containers/exchangeRate/chart/Chart'
 
 
-const ExchangeRateUI = ({model, fetchCurrencyRateList}) => {
+export const ExchangeRate = ({model, fetchCurrencyRateList}) => {
     fetchCurrencyRateList(model)
     return <div>
-        <ExchangeRateControl model={model} />
-        <ExchangeRateChart widgetId={model.id} width={1000} height={400} />
+        <Control model={model} />
+        <Chart widgetId={model.id} width={1000} height={400} />
     </div>
 }
 
-export const ExchangeRate = connect(
-        null,
-        { fetchCurrencyRateList }
-    )(ExchangeRateUI)
 export default ExchangeRate

@@ -1,5 +1,5 @@
 import { Button } from 'primereact/button'
-import { Currency } from './Currency'
+import Currency from 'Containers/exchangeRate/control/Currency'
 
 
 export const Currencies = ({currencies, onAdd, onRemove}) =>

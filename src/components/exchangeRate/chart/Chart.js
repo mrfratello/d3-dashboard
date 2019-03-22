@@ -1,10 +1,8 @@
 import { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import * as d3 from 'd3'
-import { connect } from 'react-redux'
 import { withFauxDOM } from 'react-faux-dom'
 import debounce from 'lodash.debounce'
-import { exchangeRateChartData, exchangeRateChartPeriod } from '../../../redux/selectors'
 import { dateGOSTR, dateISO } from '../../../locale'
 import './Chart.scss'
 
@@ -303,9 +301,4 @@ ExchangeRateChart.propTypes = {
     padding: PropTypes.object
 }
 
-export default connect(
-        state => ({
-            data: exchangeRateChartData(state),
-            periods: exchangeRateChartPeriod(state)
-        })
-    )(withFauxDOM(ExchangeRateChart))
+export default withFauxDOM(ExchangeRateChart)

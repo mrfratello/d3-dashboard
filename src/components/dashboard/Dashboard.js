@@ -1,19 +1,14 @@
-import { connect } from "react-redux"
 import { ScrollPanel } from 'primereact/scrollpanel'
-import { Widget } from '../widget/Widget'
-import { widgetSelector } from '../../redux/selectors'
+import { Widget } from 'Components/widget/Widget'
 import './Dashboard.scss'
 
 
-const DashboardUI = ({widgets=[]}) => 
+export const Dashboard = ({widgets=[]}) =>
     <ScrollPanel style={{width: window.innerWidth, height: window.innerHeight}} className='Dashboard'>
         <div className='Dashboard-Content'>
-            { widgets.map((widgetParams, i) => 
+            { widgets.map((widgetParams, i) =>
                 <Widget key={i} params={widgetParams} />) }
         </div>
     </ScrollPanel>
 
-
-export const Dashboard = connect(
-        state => ({ widgets: widgetSelector(state) })
-    )(DashboardUI)
+export default Dashboard
