@@ -20,7 +20,8 @@ module.exports = [{
         alias: {
             Components: path.resolve(__dirname, '../src/components/'),
             Containers: path.resolve(__dirname, '../src/containers/'),
-            Redux: path.resolve(__dirname, '../src/redux/')
+            Redux: path.resolve(__dirname, '../src/redux/'),
+            HOC: path.resolve(__dirname, '../src/hoc/')
         }
     },
 

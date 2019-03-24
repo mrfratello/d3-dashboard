@@ -21,6 +21,7 @@
     "fast-xml-parser": "^3.12.11",
     "iconv-lite": "^0.4.24",
     "lodash.debounce": "^4.0.8",
+    "lodash.pick": "^4.4.0",
     "morgan": "^1.9.1",
     "primeflex": "^1.0.0-rc.1",
     "primeicons": "^1.0.0",

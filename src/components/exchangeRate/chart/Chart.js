@@ -2,7 +2,7 @@ import { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import * as d3 from 'd3'
 import { withFauxDOM } from 'react-faux-dom'
-import debounce from 'lodash.debounce'
+import withD3Chart from 'HOC/withD3Chart'
 import { dateGOSTR, dateISO } from '../../../locale'
 import './Chart.scss'
 
@@ -13,22 +13,6 @@ class ExchangeRateChart extends Component {
 
     constructor(props) {
         super(props)
-        this.animSlow = d3.transition()
-            .duration(500)
-            .ease(d3.easeQuadInOut)
-        this.animFast =  d3.transition()
-            .duration(100)
-            .ease(d3.easeQuadInOut)
-        this.color = d3.scaleOrdinal().range(d3.schemeCategory10)
-
-        const {width, height, margin, padding} = this.props
-        this.innerWidth = width - (margin.left + margin.right + padding.left + padding.right);
-        this.innerHeight = height - (margin.top + margin.bottom + padding.top + padding.bottom);
-        this.leftX = margin.left + padding.left;
-        this.rightX = this.leftX + this.innerWidth;
-        this.topY = margin.top + padding.top;
-        this.bottomY = this.topY + this.innerHeight;
-        this.updateData = debounce(this.updateData, 500)
         this.initConstants()
     }
 
@@ -40,22 +24,40 @@ class ExchangeRateChart extends Component {
         this.CLS_LINE = 'ExchangeCurrencyContainerLines-Line'
         this.CLS_CONTAINER_MARKERS = 'ExchangeCurrencyContainerMarkers'
         this.CLS_MARKERS = 'ExchangeCurrencyContainerMarkers-Marker'
+
+        this.animSlow = d3.transition()
+            .duration(500)
+            .ease(d3.easeQuadInOut)
+        this.animFast =  d3.transition()
+            .duration(100)
+            .ease(d3.easeQuadInOut)
+        this.color = d3.scaleOrdinal().range(d3.schemeCategory10)
+        return this
     }
 
-    componentDidMount() {
+    initChart() {
         const faux = this.props.connectFauxDOM('svg', 'chart')
         this.svg = d3.select(faux)
                 .attr('width', this.props.width)
                 .attr('height', this.props.height)
-        this.initScales()
+        this.initSizes()
+            .initScales()
             .initAxis()
             // .initAim()
             .initLines()
             // .initLegend()
         this.props.animateFauxDOM(800)
-        if (this.props.data) {
-            this.updateData()
-        }
+    }
+
+    initSizes() {
+        const {width, height, margin, padding} = this.props
+        this.innerWidth = width - (margin.left + margin.right + padding.left + padding.right)
+        this.innerHeight = height - (margin.top + margin.bottom + padding.top + padding.bottom)
+        this.leftX = margin.left + padding.left
+        this.rightX = this.leftX + this.innerWidth
+        this.topY = margin.top + padding.top
+        this.bottomY = this.topY + this.innerHeight
+        return this
     }
 
     initScales() {
@@ -100,21 +102,21 @@ class ExchangeRateChart extends Component {
         return this
     }
 
-    componentDidUpdate(prevProps) {
-        if (this.props.data !== prevProps.data || this.periodUpdated()) {
-            this.updateData()
-        }
+    shouldUpdate(params, prevParams) {
+        const isEqualData = params.data === prevParams.data
+        const period = this.extractPeriod(params.periods)
+        const prevPeriod = this.extractPeriod(prevParams.periods)
+        const isEqualPeriod = period === prevPeriod
+        return !isEqualData || !isEqualPeriod
     }
 
-    periodUpdated() {
-        const {widgetId, periods} = this.props
+    extractPeriod(periods) {
+        const {widgetId} = this.props
         const [period] = periods.filter(item => item.id === widgetId)
-        return this.period !== period
-            ? this.period = period
-            : false
+        return period
     }
 
-    updateData() {
+    updateChart() {
         const faux = this.props.connectFauxDOM('svg', 'chart')
         this.svg = d3.select(faux)
         this.dataset = this.props.data.slice()
@@ -128,7 +130,7 @@ class ExchangeRateChart extends Component {
         if (!this.dataset.length) {
             return this
         }
-        const {dateFrom, dateTo} = this.period
+        const {dateFrom, dateTo} = this.extractPeriod(this.props.periods)
         let [minRate, maxRate] = this.dataset.map(({set}) => d3.extent(set, d => d.rate))
                 .reduce((extent, item) => [
                     Math.min(extent[0], item[0]),
@@ -301,4 +303,6 @@ ExchangeRateChart.propTypes = {
     padding: PropTypes.object
 }
 
-export default withFauxDOM(ExchangeRateChart)
+export default withFauxDOM(
+        withD3Chart({updateOn: ['data', 'periods']})(ExchangeRateChart)
+    )
