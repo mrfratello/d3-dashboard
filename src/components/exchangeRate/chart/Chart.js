@@ -1,7 +1,7 @@
-import { Component, Fragment } from 'react'
 import PropTypes from 'prop-types'
 import * as d3 from 'd3'
 import { withFauxDOM } from 'react-faux-dom'
+import { BaseChart } from 'Components/BaseChart/BaseChart'
 import withD3Chart from 'HOC/withD3Chart'
 import { dateGOSTR, dateISO } from '../../../locale'
 import './Chart.scss'
@@ -9,14 +9,10 @@ import './Chart.scss'
 
 const toDate = date => date instanceof Date ? date : dateISO.parse(date)
 
-class ExchangeRateChart extends Component {
-
-    constructor(props) {
-        super(props)
-        this.initConstants()
-    }
+class ExchangeRateChart extends BaseChart {
 
     initConstants() {
+        super.initConstants()
         this.CLS_AXIS = 'ExchangeCurrencyAxis'
         this.CLS_AXIS_Y = 'ExchangeCurrencyAxis_orient_y'
         this.CLS_AXIS_X = 'ExchangeCurrencyAxis_orient_x'
@@ -24,14 +20,6 @@ class ExchangeRateChart extends Component {
         this.CLS_LINE = 'ExchangeCurrencyContainerLines-Line'
         this.CLS_CONTAINER_MARKERS = 'ExchangeCurrencyContainerMarkers'
         this.CLS_MARKERS = 'ExchangeCurrencyContainerMarkers-Marker'
-
-        this.animSlow = d3.transition()
-            .duration(500)
-            .ease(d3.easeQuadInOut)
-        this.animFast =  d3.transition()
-            .duration(100)
-            .ease(d3.easeQuadInOut)
-        this.color = d3.scaleOrdinal().range(d3.schemeCategory10)
         return this
     }
 
@@ -47,17 +35,6 @@ class ExchangeRateChart extends Component {
             .initLines()
             // .initLegend()
         this.props.animateFauxDOM(800)
-    }
-
-    initSizes() {
-        const {width, height, margin, padding} = this.props
-        this.innerWidth = width - (margin.left + margin.right + padding.left + padding.right)
-        this.innerHeight = height - (margin.top + margin.bottom + padding.top + padding.bottom)
-        this.leftX = margin.left + padding.left
-        this.rightX = this.leftX + this.innerWidth
-        this.topY = margin.top + padding.top
-        this.bottomY = this.topY + this.innerHeight
-        return this
     }
 
     initScales() {
@@ -272,35 +249,19 @@ class ExchangeRateChart extends Component {
             .attr('y1', this.scaleRate(rate))
             .attr('y2', this.scaleRate.range()[0])
     }
-
-    render() {
-        return <Fragment>
-            { this.props.chart }
-        </Fragment>
-    }
 }
 
 ExchangeRateChart.defaultProps = {
-    margin: {
-        top: 10,
-        bottom: 10,
-        left: 10,
-        right: 300
-    },
+    ...BaseChart.defaultProps,
     padding: {
-        top: 30,
-        bottom: 30,
-        left: 50,
-        right: 30
+        ...BaseChart.defaultProps.padding,
+        left: 50
     }
 }
 
 ExchangeRateChart.propTypes = {
-    widgetId: PropTypes.any.isRequired,
-    width: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
-    margin: PropTypes.object,
-    padding: PropTypes.object
+    ...BaseChart.propTypes,
+    widgetId: PropTypes.any.isRequired
 }
 
 export default withFauxDOM(
