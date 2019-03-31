@@ -125,11 +125,13 @@ class ExchangeRateChart extends BaseChart {
     }
 
     updateAxis() {
+        this.props.drawFauxDOM(800)
         const axisRateFn = d3.axisLeft()
             .scale(this.scaleRate)
         this.axisRate
             .transition(this.animSlow)
             .call(axisRateFn)
+        this.props.drawFauxDOM(800)
 
         const dateTicksCount = Math.min(d3.timeDay.count(...this.scaleDate.domain()), 10)
         const axisDateFn = d3.axisBottom()
@@ -147,22 +149,20 @@ class ExchangeRateChart extends BaseChart {
         this.lineFn
             .x(d => this.scaleDate(d.date))
             .y(d => this.scaleRate(d.rate))
-        const lines = this.linesContainer.selectAll('.currency-line')
+        this.linesContainer.selectAll('.currency-line')
             .data(this.dataset)
-        lines.exit().remove()
-        const newLines = this.enterLines(lines)
-        lines.merge(newLines)
+            .join(enter => this.enterLines(enter))
             .datum(d => d.set)
             .transition(this.animSlow)
             .attr('d', d => this.lineFn(d))
         this.props.animateFauxDOM(800)
         this.updateMarkerGroups()
+        this.props.animateFauxDOM(800)
         return this
     }
 
     enterLines(lines) {
-        return lines.enter()
-            .append('path')
+        return lines.append('path')
             .classed('currency-line', true)
             .attr('fill', 'none')
             .attr('stroke', (d, i) => this.color(i))
@@ -173,30 +173,28 @@ class ExchangeRateChart extends BaseChart {
         const markerGroups = this.markersContainer
             .selectAll('.currency-markers__group')
             .data(this.dataset)
-        markerGroups.exit().remove()
-        const newMarkerGroups = markerGroups.enter()
-            .append('g')
-            .classed('currency-markers__group', true)
-        this.updateMarkers(markerGroups.merge(newMarkerGroups))
+            .join(enter => enter.append('g').classed('currency-markers__group', true))
+        this.updateMarkers(markerGroups)
     }
 
     updateMarkers(groups) {
-        const markers = groups.selectAll('.currency-marker')
+        groups.selectAll('.currency-marker')
             .data((d, i) => d.set.map(item => ({
                 ...item,
                 i
             })), d => d.date)
-        this.removeMarkers(markers)
-        this.enterMarkers(markers)
-        markers.transition(this.animSlow)
+            .join(
+                enter => this.enterMarkers(enter),
+                null,
+                exit => this.removeMarkers(exit)
+            ).transition(this.animSlow)
             .attr('cy', d => this.scaleRate(d.rate))
             .attr('cx', d => this.scaleDate(d.date))
         return this
     }
 
     removeMarkers(markers) {
-        markers.exit()
-            .transition(this.animSlow)
+        markers.transition(this.animSlow)
             .attr('cy', d => this.scaleRate(d.rate))
             .attr('cx', d => this.scaleDate(d.date))
             .attr('r', 0)
@@ -205,8 +203,7 @@ class ExchangeRateChart extends BaseChart {
 
     enterMarkers(markers) {
         const self = this
-        return markers.enter()
-            .append('circle')
+        return markers.append('circle')
             .classed('currency-marker', true)
             .attr('cy', d => this.scaleRate(d.rate))
             .attr('cx', d => this.scaleDate(d.date))
@@ -227,7 +224,7 @@ class ExchangeRateChart extends BaseChart {
                     .transition(self.animFast)
                     .attr('r', 4)
                     .attr('stroke-width', 4)
-        })
+            })
             // .on('mouseover.aim', d => this.replaceAimLines(d))
             // .on('mouseout.aim', () => this.hideAimLines())
     }
