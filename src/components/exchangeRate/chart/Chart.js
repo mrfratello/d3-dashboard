@@ -4,6 +4,7 @@ import { withFauxDOM } from 'react-faux-dom'
 import { BaseChart } from 'Components/BaseChart/BaseChart'
 import withD3Chart from 'HOC/withD3Chart'
 import { dateGOSTR, dateISO } from '../../../locale'
+import color from '../color'
 import './Chart.scss'
 
 
@@ -162,7 +163,7 @@ class ExchangeRateChart extends BaseChart {
             .x(d => this.scaleDate(d.date))
             .y(d => this.scaleRate(d.rate))
         this.linesContainer.selectAll('.currency-line')
-            .data(this.dataset)
+            .data(this.dataset, d => d.id)
             .join(enter => this.enterLines(enter))
             .datum(d => d.set)
             .transition(this.animSlow)
@@ -176,14 +177,14 @@ class ExchangeRateChart extends BaseChart {
         return lines.append('path')
             .classed('currency-line', true)
             .attr('fill', 'none')
-            .attr('stroke', (d, i) => this.color(i))
+            .attr('stroke', d => color(d.id))
             .attr('stroke-width', 1)
     }
 
     updateMarkerGroups() {
         const markerGroups = this.markersContainer
             .selectAll('.currency-markers__group')
-            .data(this.dataset)
+            .data(this.dataset, d => d.id)
             .join(enter => enter.append('g').classed('currency-markers__group', true))
         this.updateMarkers(markerGroups)
         this.props.animateFauxDOM(800)
@@ -191,9 +192,9 @@ class ExchangeRateChart extends BaseChart {
 
     updateMarkers(groups) {
         groups.selectAll('.currency-marker')
-            .data((d, i) => d.set.map(item => ({
+            .data(d => d.set.map(item => ({
                 ...item,
-                i
+                setId: d.id
             })), d => d.date)
             .join(
                 enter => this.enterMarkers(enter),
@@ -219,7 +220,7 @@ class ExchangeRateChart extends BaseChart {
             .classed('currency-marker', true)
             .attr('cy', d => this.scaleRate(d.rate))
             .attr('cx', d => this.scaleDate(d.date))
-            .attr('fill', d => d3.color(this.color(d.i)))
+            .attr('fill', d => d3.color(color(d.setId)))
             .attr('r', 4)
             .attr('stroke', 'transparent')
             .attr('stroke-width', 4)

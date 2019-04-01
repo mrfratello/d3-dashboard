@@ -14,13 +14,13 @@ export const fetchCurrencyList = dispatch =>
             ({data}) => dispatch(fillCurrencyList(data))
         )
 
-export const fetchCurrencyRate = ({id, name, code, dateFrom, dateTo}) =>
-    axios.get(`/api/currency/${id}`, {params: { 
+export const fetchCurrencyRate = ({id, name, code, dateFrom, dateTo, itemId}) =>
+    axios.get(`/api/currency/${id}`, {params: {
         dateFrom: dateGOSTR.format(new Date(dateFrom)),
         dateTo: dateGOSTR.format(new Date(dateTo))
     }})
     .then(({data}) => ({
-        id,
+        id: itemId,
         label: `[${code}] ${name}`,
         set: data.map(item => ({
             ...item,

@@ -37,8 +37,9 @@ export const fetchCurrencyRateList = (ExchangeRateWidget) => dispatch =>
     Promise.all(
         ExchangeRateWidget.currencies
             .filter(i => i.currency)
-            .map(({currency}) => fetchCurrencyRate({
+            .map(({currency, id}) => fetchCurrencyRate({
                 ...currency,
+                itemId: id,
                 dateFrom: ExchangeRateWidget.dateFrom,
                 dateTo: ExchangeRateWidget.dateTo
             }))
