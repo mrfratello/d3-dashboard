@@ -31,9 +31,8 @@ class ExchangeRateChart extends BaseChart {
         this.initSizes()
             .initScales()
             .initAxis()
-            // .initAim()
+            .initAim()
             .initLines()
-            // .initLegend()
         this.props.animateFauxDOM(800)
     }
 
@@ -79,6 +78,21 @@ class ExchangeRateChart extends BaseChart {
         return this
     }
 
+    initAim() {
+        this.aimGroup = this.svg.append('g')
+            .classed('currency-aim', true)
+            .classed('currency-aim_hidden', true)
+        this.aimLineY = this.aimGroup.append('line')
+            .classed('currency-aim__line', true)
+            .classed('currency-aim__line_type_y', true)
+            .attr('x1', -1)
+            .attr('x2', -1)
+            .attr('y1', -1)
+            .attr('y2', -1)
+        this.props.animateFauxDOM(800)
+        return this
+    }
+
     shouldUpdate(params, prevParams) {
         const isEqualData = params.data === prevParams.data
         const period = this.extractPeriod(params.periods)
@@ -97,10 +111,10 @@ class ExchangeRateChart extends BaseChart {
         const faux = this.props.connectFauxDOM('svg', 'chart')
         this.svg = d3.select(faux)
         this.dataset = this.props.data.slice()
-        this.updateScales()
+        this.hideAimLines()
+            .updateScales()
             .updateAxis()
             .updateLines()
-            // .updateLegend()
     }
 
     updateScales() {
@@ -125,13 +139,11 @@ class ExchangeRateChart extends BaseChart {
     }
 
     updateAxis() {
-        this.props.drawFauxDOM(800)
         const axisRateFn = d3.axisLeft()
             .scale(this.scaleRate)
         this.axisRate
             .transition(this.animSlow)
             .call(axisRateFn)
-        this.props.drawFauxDOM(800)
 
         const dateTicksCount = Math.min(d3.timeDay.count(...this.scaleDate.domain()), 10)
         const axisDateFn = d3.axisBottom()
@@ -157,7 +169,6 @@ class ExchangeRateChart extends BaseChart {
             .attr('d', d => this.lineFn(d))
         this.props.animateFauxDOM(800)
         this.updateMarkerGroups()
-        this.props.animateFauxDOM(800)
         return this
     }
 
@@ -175,6 +186,7 @@ class ExchangeRateChart extends BaseChart {
             .data(this.dataset)
             .join(enter => enter.append('g').classed('currency-markers__group', true))
         this.updateMarkers(markerGroups)
+        this.props.animateFauxDOM(800)
     }
 
     updateMarkers(groups) {
@@ -211,40 +223,46 @@ class ExchangeRateChart extends BaseChart {
             .attr('r', 4)
             .attr('stroke', 'transparent')
             .attr('stroke-width', 4)
-            .on('mouseover', function(d) {
+            .on('mouseover', function() {
                 d3.select(this)
                     .interrupt()
                     .transition(self.animFast)
                     .attr('r', 8)
                     .attr('stroke-width', 0)
+                self.props.animateFauxDOM(800)
             })
-            .on('mouseout', function(d) {
+            .on('mouseout', function() {
                 d3.select(this)
                     .interrupt()
                     .transition(self.animFast)
                     .attr('r', 4)
                     .attr('stroke-width', 4)
+                self.props.animateFauxDOM(800)
             })
-            // .on('mouseover.aim', d => this.replaceAimLines(d))
-            // .on('mouseout.aim', () => this.hideAimLines())
+            .on('mouseover.aim', d => this.replaceAimLines(d))
     }
 
-    replaceAimLines({rate, date}) {
-        // this.showAimLines()
+    replaceAimLines({rate}) {
+        this.showAimLines()
         this.aimLineY
             .interrupt(self.animFast)
             .transition(this.animFast)
-            .attr('x1', this.scaleDate(date))
+            .attr('x1', this.scaleDate.range()[1])
             .attr('x2', this.scaleDate.range()[0])
             .attr('y1', this.scaleRate(rate))
             .attr('y2', this.scaleRate(rate))
-        this.aimLineX
-            .interrupt(self.animFast)
-            .transition(this.animFast)
-            .attr('x1', this.scaleDate(date) + .5)
-            .attr('x2', this.scaleDate(date) + .5)
-            .attr('y1', this.scaleRate(rate))
-            .attr('y2', this.scaleRate.range()[0])
+        this.props.animateFauxDOM(800)
+    }
+
+    showAimLines() {
+        this.aimGroup
+            .classed('currency-aim_hidden', false)
+    }
+
+    hideAimLines() {
+        this.aimGroup
+            .classed('currency-aim_hidden', true)
+        return this
     }
 }
 
