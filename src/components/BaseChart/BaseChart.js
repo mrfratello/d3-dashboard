@@ -19,7 +19,6 @@ export class BaseChart extends Component {
         this.animFast =  d3.transition()
             .duration(100)
             .ease(d3.easeQuadInOut)
-        this.color = d3.scaleOrdinal().range(d3.schemeCategory10)
         return this
     }
 
@@ -31,6 +30,16 @@ export class BaseChart extends Component {
         this.rightX = this.leftX + this.innerWidth
         this.topY = margin.top + padding.top
         this.bottomY = this.topY + this.innerHeight
+        return this
+    }
+
+    initChart() {
+        this.initial.initChart()
+        return this
+    }
+
+    updateChart() {
+        this.refresher.updateChart()
         return this
     }
 
