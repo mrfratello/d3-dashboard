@@ -72,9 +72,8 @@ export class ExchangeRateChartRefresher {
         self.linesContainer.selectAll('.currency-line')
             .data(this.dataset, d => d.id)
             .join(enter => this.enterLines(enter))
-            .datum(d => d.set)
             .transition(self.animSlow)
-            .attr('d', d => self.lineFn(d))
+            .attr('d', d => self.lineFn(d.set))
         self.props.animateFauxDOM(800)
         this.updateMarkerGroups()
         return this
@@ -84,7 +83,6 @@ export class ExchangeRateChartRefresher {
         return lines.append('path')
             .classed('currency-line', true)
             .attr('fill', 'none')
-            .attr('d', 'M')
             .attr('stroke', d => color(d.id))
             .attr('stroke-width', 1)
     }
