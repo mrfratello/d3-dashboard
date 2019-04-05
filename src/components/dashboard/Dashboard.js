@@ -7,7 +7,7 @@ export const Dashboard = ({widgets=[]}) =>
     <ScrollPanel style={{width: window.innerWidth, height: window.innerHeight}} className='Dashboard'>
         <div className='Dashboard-Content'>
             { widgets.map((widgetParams, i) =>
-                <Widget key={i} params={widgetParams} />) }
+                <Widget key={i} {...widgetParams} />) }
         </div>
     </ScrollPanel>
 

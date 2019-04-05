@@ -4,7 +4,7 @@ import { dateISO } from '../../../locale'
 
 export const Period = ({model, update}) =>
     <div className='p-grid p-fluid'>
-        <div className='p-col-4'>
+        <div className='p-col'>
             <span className='p-float-label'>
                 <Calendar id='dateFrom'
                         value={dateISO.parse(model.dateFrom)}
@@ -18,7 +18,7 @@ export const Period = ({model, update}) =>
                 <label htmlFor='dateFrom'>От</label>
             </span>
         </div>
-        <div className='p-col-4'>
+        <div className='p-col'>
             <span className='p-float-label'>
                 <Calendar id='dateTo'
                         value={dateISO.parse(model.dateTo)}

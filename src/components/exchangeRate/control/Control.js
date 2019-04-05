@@ -6,7 +6,7 @@ export const ExchangeRateControl = ({model, addCurrencyItem, removeCurrencyItem}
     <div>
         <Period model={model} />
         <div className='p-grid p-fluid'>
-            <div className='p-col-8'>
+            <div className='p-col'>
                 <Currencies currencies={model.currencies}
                             onAdd={() => addCurrencyItem({ id: model.id })}
                             onRemove={currency => removeCurrencyItem(currency)} />

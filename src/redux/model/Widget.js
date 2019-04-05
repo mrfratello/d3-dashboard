@@ -6,7 +6,9 @@ export class Widget extends Model {
     static get fields() {
         return {
             id: attr(),
-            title: attr()
+            title: attr(),
+            width: attr(),
+            height: attr()
         }
     }
     static reducer({type, payload}, Widget) {

@@ -57,7 +57,9 @@ ExchangeRateChart.defaultProps = {
     ...BaseChart.defaultProps,
     padding: {
         ...BaseChart.defaultProps.padding,
-        left: 50
+        left: 20,
+        right: 10,
+        bottom: 20
     }
 }
 
