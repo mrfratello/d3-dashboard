@@ -1,4 +1,5 @@
 import * as d3 from 'd3'
+import debounce from 'lodash.debounce'
 import { dateGOSTR, dateISO } from '../../../locale'
 import color from '../color'
 
@@ -9,6 +10,7 @@ export class ExchangeRateChartRefresher {
 
     constructor(self) {
         this.self = self
+        this.replaceAimLines = debounce(this.replaceAimLines, 100)
     }
 
     updateChart() {
