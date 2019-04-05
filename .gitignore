@@ -1,3 +1,6 @@
+# IDE
+.vscode/
+
 # npm & yarn
 node_modules/
 yarn-error.log

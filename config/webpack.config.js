@@ -16,16 +16,28 @@ module.exports = [{
         filename: 'bundle.js'
     },
 
+    resolve: {
+        alias: {
+            Components: path.resolve(__dirname, '../src/components/'),
+            Containers: path.resolve(__dirname, '../src/containers/'),
+            Redux: path.resolve(__dirname, '../src/redux/'),
+            HOC: path.resolve(__dirname, '../src/hoc/')
+        }
+    },
+
     module: {
         rules: [{
             test: /\.js?$/,
             exclude: /(node_modules|bower_components)/,
             loader: 'babel-loader',
             options: {
-                presets: ['@babel/preset-env']
+                presets: [
+                    '@babel/preset-env',
+                    '@babel/preset-react'
+                ]
               }
         }, {
-            test: /\.scss$/,
+            test: /\.(sc|c)ss$/,
             use: [
                 'style-loader',
                 'css-loader',
@@ -41,6 +53,24 @@ module.exports = [{
                     }
                 }
             ]
+        }, {
+                test: /\.(png|jpg|gif)$/,
+                use: [{
+                    loader: 'file-loader',
+                    options: {
+                        outputPath: 'images',
+                        publicPath: 'assets/images'
+                    }
+                }]
+        }, {
+            test: /\.(woff(2)?|ttf|eot|svg)$/,
+            use: [{
+                loader: 'file-loader',
+                options: {
+                    outputPath: 'fonts',
+                    publicPath: 'assets/fonts'
+                }
+            }]
         }],
     },
 
