@@ -4,12 +4,14 @@ import pick from 'lodash.pick'
 
 
 export const withD3Chart = ({
-    updateOn = ['data']
-}) => WrappedComponent => 
+    updateOn = ['data'],
+    resizeOn = ['width', 'height']
+}) => WrappedComponent =>
     class WithD3Chart extends Component {
 
         componentDidMount() {
-            this.component.updateChart = debounce(this.component.updateChart, 500)
+            this.component.updateChart = debounce(this.component.updateChart, 300)
+            this.component.resizeChart = debounce(this.component.resizeChart, 100)
             this.component.initChart()
         }
 
@@ -17,6 +19,10 @@ export const withD3Chart = ({
             const updatedProps = props => pick(props, updateOn)
             if (this.component.shouldUpdate(updatedProps(this.props), updatedProps(prevProps))) {
                 this.component.updateChart()
+            }
+            const resizeProps = props => pick(props, resizeOn)
+            if (this.component.shouldResize(resizeProps(this.props), resizeProps(prevProps))) {
+                this.component.resizeChart()
             }
         }
 

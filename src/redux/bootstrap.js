@@ -16,8 +16,8 @@ export default function bootstrap(orm) {
             dateTo: dateISO.format(NOW),
             widget: Widget.create({
                 title: 'Курсы валют',
-                width: 700,
-                height: 400
+                // width: 700,
+                // height: 400
             })
         })
         ExchangeRateCurrency.create({

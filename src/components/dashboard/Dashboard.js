@@ -1,5 +1,5 @@
 import GridLayout from 'react-grid-layout'
-import { Widget } from 'Components/widget/Widget'
+import Widget from 'Components/widget/Widget'
 import './Dashboard.scss'
 
 
