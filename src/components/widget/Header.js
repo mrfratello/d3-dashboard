@@ -4,6 +4,7 @@ import {
     InplaceDisplay,
     InplaceContent
 } from 'primereact/components/inplace/Inplace'
+import './Header.scss'
 
 
 export const WidgetHeader = ({id, title, widgetUpdate}) =>
