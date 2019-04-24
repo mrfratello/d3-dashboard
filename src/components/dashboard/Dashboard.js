@@ -1,5 +1,6 @@
 import GridLayout from 'react-grid-layout'
 import Widget from 'Components/widget/Widget'
+import { dashboard } from '../../constants'
 import './Dashboard.scss'
 
 
@@ -17,10 +18,10 @@ export const Dashboard = ({widgets=[], widgetLayoutUpdate}) => {
                             data-grid={{
                                 x: 0,
                                 y: 0,
-                                w: widgetParams.w || 4,
-                                h: widgetParams.h || 12,
-                                minH: 10,
-                                minW: 3
+                                w: widgetParams.w || dashboard[widgetParams.type.type].w,
+                                h: widgetParams.h || dashboard[widgetParams.type.type].h,
+                                minW: dashboard[widgetParams.type.type].minW,
+                                minH: dashboard[widgetParams.type.type].minH
                             }}>
                             <Widget key={i} {...widgetParams} />
                         </div>
