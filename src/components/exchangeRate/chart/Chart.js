@@ -4,6 +4,7 @@ import { BaseChart } from 'Components/BaseChart/BaseChart'
 import withD3Chart from 'HOC/withD3Chart'
 import ChartInitial from './Initial'
 import ChartRefresher from './Refresher'
+import ChartResizer from './Resizer'
 import './Chart.scss'
 
 
@@ -13,6 +14,7 @@ class ExchangeRateChart extends BaseChart {
         super(props)
         this.initial = new ChartInitial(this)
         this.refresher = new ChartRefresher(this)
+        this.resizer = new ChartResizer(this)
     }
 
     initConstants() {

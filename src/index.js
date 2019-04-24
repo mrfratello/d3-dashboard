@@ -6,6 +6,8 @@ import 'primereact/resources/themes/nova-light/theme.css'
 import 'primereact/resources/primereact.min.css'
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.scss'
+import 'react-grid-layout/css/styles.css'
+import 'react-resizable/css/styles.css'
 import './main.scss'
 
 

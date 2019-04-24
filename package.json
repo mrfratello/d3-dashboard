@@ -29,6 +29,8 @@
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
     "react-faux-dom": "^4.4.0",
+    "react-grid-layout": "^0.16.6",
+    "react-measure": "^2.2.6",
     "react-redux": "^6.0.1",
     "redux": "^4.0.1",
     "redux-orm": "^0.12.2",

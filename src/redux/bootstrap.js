@@ -15,13 +15,8 @@ export default function bootstrap(orm) {
             dateFrom: dateISO.format(d3.timeDay.offset(NOW, -17)),
             dateTo: dateISO.format(NOW),
             widget: Widget.create({
-                title: 'Курсы валют',
-                width: 700,
-                height: 400
+                title: 'Курсы валют'
             })
-        })
-        ExchangeRateCurrency.create({
-            widget: exchangeRateWidget
         })
         ExchangeRateCurrency.create({
             widget: exchangeRateWidget

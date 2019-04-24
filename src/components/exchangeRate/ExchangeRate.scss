@@ -1,0 +1,10 @@
+.ExchangeRate {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    &-Chart {
+        flex: 1;
+        height: 0;
+    }
+}

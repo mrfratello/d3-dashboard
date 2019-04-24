@@ -43,6 +43,17 @@ export class BaseChart extends Component {
         return this
     }
 
+    resizeChart() {
+        this.initSizes()
+            .resizer
+            .resizeChart()
+        return this
+    }
+
+    shouldResize({width, height}, {width:prevWidth, height:prevHeight}) {
+        return width !== prevWidth || height !== prevHeight
+    }
+
     render() {
         return <Fragment>
             { this.props.chart }
