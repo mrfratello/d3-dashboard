@@ -15,6 +15,7 @@ export class ExchangeRateChartResizer {
             .attr('height', self.props.height)
         this.resizeScales()
             .resizeAxes()
+            .resizeAim()
         self.updateChart()
     }
 
@@ -33,6 +34,29 @@ export class ExchangeRateChartResizer {
             .attr('transform', `translate(${self.leftX}, 0)`)
         self.axisDate
             .attr('transform', `translate(0, ${self.bottomY})`)
+        return this
+    }
+
+    resizeAim() {
+        const self = this.self
+        self.aimLineY
+            .attr('x1', self.scaleDate.range()[1])
+            .attr('x2', self.scaleDate.range()[0])
+            .attr('y1', self.bottomY)
+            .attr('y2', self.bottomY)
+        self.aimTooltipY
+            .attr('x', self.scaleDate.range()[1])
+            .attr('y', self.bottomY)
+
+        const rate = self.aimRate.get(self.aimTooltipY.node())
+        if (rate) {
+            const aimY = self.scaleRate(rate)
+            self.aimLineY
+                .attr('y1', aimY)
+                .attr('y2', aimY)
+            self.aimTooltipY
+                .attr('y', aimY)
+        }
         return this
     }
 }
