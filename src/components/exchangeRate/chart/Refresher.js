@@ -5,6 +5,8 @@ import color from '../color'
 
 
 const toDate = date => date instanceof Date ? date : dateISO.parse(date)
+const format = d3.format(',.3')
+const aimRate = d3.local()
 
 export class ExchangeRateChartRefresher {
 
@@ -165,6 +167,18 @@ export class ExchangeRateChartRefresher {
             .attr('x2', self.scaleDate.range()[0])
             .attr('y1', self.scaleRate(rate))
             .attr('y2', self.scaleRate(rate))
+        self.aimTooltipY
+            .interrupt(self.animFast)
+            .transition(self.animFast)
+            .attr('x', self.scaleDate.range()[1])
+            .attr('y', self.scaleRate(rate))
+            .tween('text', function() {
+                const prevRate = aimRate.get(this) || 0
+                const interpolator = d3.interpolateNumber(prevRate, rate)
+                aimRate.set(this, rate)
+                return i => d3.select(this)
+                    .text(format(interpolator(i)))
+            })
         self.props.animateFauxDOM(800)
     }
 }
