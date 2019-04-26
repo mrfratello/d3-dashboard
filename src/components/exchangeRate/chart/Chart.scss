@@ -1,5 +1,5 @@
 .currency-aim{
-    
+
     &_hidden {
         display: none;
     }
@@ -8,6 +8,10 @@
         stroke: currentColor;
         stroke-width: .5;
         stroke-dasharray: 6, 3;
+    }
+
+    &__text {
+        font: normal 12px sans-serif;
     }
 }
 

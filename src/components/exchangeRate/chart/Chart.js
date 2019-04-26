@@ -1,3 +1,4 @@
+import * as d3 from 'd3'
 import PropTypes from 'prop-types'
 import { withFauxDOM } from 'react-faux-dom'
 import { BaseChart } from 'Components/BaseChart/BaseChart'
@@ -15,6 +16,7 @@ class ExchangeRateChart extends BaseChart {
         this.initial = new ChartInitial(this)
         this.refresher = new ChartRefresher(this)
         this.resizer = new ChartResizer(this)
+        this.aimRate = d3.local()
     }
 
     initConstants() {
@@ -59,8 +61,8 @@ ExchangeRateChart.defaultProps = {
     ...BaseChart.defaultProps,
     padding: {
         ...BaseChart.defaultProps.padding,
-        left: 20,
-        right: 10,
+        left: 30,
+        right: 0,
         bottom: 20
     }
 }

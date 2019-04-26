@@ -1,10 +1,13 @@
 import * as d3 from 'd3'
 import debounce from 'lodash.debounce'
+import { compose } from 'redux'
 import { dateGOSTR, dateISO } from '../../../locale'
 import color from '../color'
 
 
 const toDate = date => date instanceof Date ? date : dateISO.parse(date)
+const format = d3.format(',.3')
+const aimRate = d3.local()
 
 export class ExchangeRateChartRefresher {
 
@@ -18,7 +21,6 @@ export class ExchangeRateChartRefresher {
         const faux = self.props.connectFauxDOM('svg', 'chart')
         self.svg = d3.select(faux)
         this.dataset = self.props.data.slice()
-        self.hideAimLines()
         this.updateScales()
             .updateAxis()
             .updateLines()
@@ -165,6 +167,22 @@ export class ExchangeRateChartRefresher {
             .attr('x2', self.scaleDate.range()[0])
             .attr('y1', self.scaleRate(rate))
             .attr('y2', self.scaleRate(rate))
+        self.aimTooltipY
+            .interrupt(self.animFast)
+            .transition(self.animFast)
+            .attr('x', self.scaleDate.range()[1])
+            .attr('y', self.scaleRate(rate))
+            .tween('text', function() {
+                const prevRate = self.aimRate.get(this) || 0
+                const interpolator = d3.interpolateNumber(prevRate, rate)
+                const renderer = compose(
+                    v => self.aimTooltipY.text(v),
+                    format,
+                    interpolator
+                )
+                self.aimRate.set(this, rate)
+                return i => renderer(i)
+            })
         self.props.animateFauxDOM(800)
     }
 }
